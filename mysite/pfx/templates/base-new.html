@@ -1,0 +1,18 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+      <link href="{% static 'pfx/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <header>
+      <h1>Poultry FX</h1>
+    </header>
+
+     <script src="http://code.jquery.com/jquery.js"></script>
+     <script src="{% static 'pfx/bootstrap/js/bootstrap.min.js' %}"></script>
+  </body>
+</html>
+

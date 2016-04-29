@@ -1,0 +1,102 @@
+import os,django,csv,codecs,sys,datetime
+csv_filepathname="c:\\users\\pm\\downloads\\trades.csv"
+path = 'c:\\work\\django\\mysite\\'  # use your own username here
+if path not in sys.path:
+    sys.path.append(path)
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mysite.settings")
+django.setup()
+
+from django.contrib.auth.models import User
+from pfx import models
+
+def bootstrap_data():
+    from pfx.models import Member,IGPL,IndividualPL,IndividualCash
+    models.IndividualPL.objects.all().delete()
+    models.IndividualCash.objects.all().delete()
+
+    #u1 = User.objects.create_user('john.cooper@ensoft.com','john.cooper@ensoft.com','jellyfish')
+    #u2 = User.objects.create_user('dan.shavick@softwire.com','dan.shavick@softwire.com','jellyfish')
+    #u1.save()
+    #u2.save()
+    u1 = User.objects.get(email = 'john.cooper@ensoft.com')
+    u2 = User.objects.get(email = 'dan.shavick@softwire.com')
+    u3 = User.objects.get(email = 'phil.marsden@softwire.com')
+    #m1 = Member(user = u1,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
+    #m1.save()
+    #m2 = Member(user = u2,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
+    #m2.save()
+    m1 = Member.objects.get(user = u1)
+    m2 = Member.objects.get(user = u2)
+    m3 = Member.objects.get(user = u3)
+    ic1 = IndividualCash(member = m1, size = 3000, transaction_date = datetime.datetime.now())
+    ic1.save()
+    ic2 = IndividualCash(member = m2, size = 3000, transaction_date = datetime.datetime.now())
+    ic2.save()
+    ic3 = IndividualCash(member = m3, size = 3000, transaction_date = datetime.datetime.now())
+    ic3.save()
+    igpl1 = IGPL.objects.get(closing_ref = 'E4AL8LA2')
+    ipl1 = IndividualPL(member=m1, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
+    ipl1.save()
+    ipl2 = IndividualPL(member=m2, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
+    ipl2.save()
+    ipl3 = IndividualPL(member=m3, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
+    ipl3.save()
+
+
+def mycsv_reader(csv_reader):
+  while True:
+    try:
+      yield next(csv_reader)
+    except csv.Error:
+      pass
+    continue
+
+def import_csv():
+    #dataReader = csv.reader(open(csv_filepathname, 'rU'), dialect='excel-tab')
+    #start_import = False
+
+    reader = mycsv_reader(csv.reader(open(csv_filepathname, encoding='utf-16', mode='rU'), dialect='excel-tab'))
+    start_import = False
+
+    models.IGPL.objects.all().delete()
+
+    for row in reader:
+        if start_import:
+            igpl = models.IGPL()
+            igpl.closing_ref = row[0]
+            igpl.closed_date = datetime.datetime.strptime(row[1], "%d/%m/%y").strftime("%Y-%m-%d")
+            igpl.opening_ref = row[2]
+            igpl.opening_date = datetime.datetime.strptime(row[3], "%d/%m/%y").strftime("%Y-%m-%d")
+            igpl.market = row[4]
+            igpl.period = row[5]
+            igpl.direction = row[6]
+            igpl.size = float(row[7])
+            igpl.opening_price = float(row[8])
+            igpl.closing_price = float(row[9])
+            igpl.trade_ccy = row[10]
+            igpl.gross_profit = float(row[11])
+            igpl.funding = float(row[12])
+            igpl.borrowing = float(row[13])
+            igpl.dividends = float(row[14])
+            igpl.lrprem = float(row[15])
+            igpl.others = float(row[16])
+            if (row[17] == "-" ):
+                igpl.commccy = float(0)
+            else:
+                igpl.commccy = float(row[17])
+            igpl.comm = float(row[18])
+            igpl.net_profit = float(row[19])
+            igpl.save()
+            print("Imported",row[0])
+
+        try:
+            if row[0] == 'Closing Ref':
+                start_import = True
+        except:
+            start_import = False
+
+
+
+import_csv()
+bootstrap_data()

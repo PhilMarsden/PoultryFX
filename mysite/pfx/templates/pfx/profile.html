@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% comment %}
+  Main page.
+{% endcomment %}
+
+{% block head %}
+    <title>Poultry FX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% endblock %}
+
+{% block body %}
+   <h1 class="page-header">Dashboard</h1>
+
+{% if trades %}
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Ref</th>
+          <th>Market</th>
+          <th>Direction</th>
+          <th>Opening Price</th>
+          <th>Closing Price</th>
+          <th>Size</th>
+          <th>Gross profit</th>
+          <th>Commission</th>
+          <th>Fun Fund</th>
+          <th>Net Profit</th>
+        </tr>
+       </thead>
+       <tbody>
+        {% for trade in trades %}
+        <tr>
+            <td>{{ trade.igpl.opening_ref }}</td>
+            <td>{{ trade.igpl.market }}</td>
+            <td>{{ trade.igpl.direction }}</td>
+            <td>{{ trade.igpl.opening_price }}</td>
+            <td>{{ trade.igpl.closing_price }}</td>
+            <td>{{ trade.size }}</td>
+            <td>{{ trade.gross_profit }}</td>
+            <td>{{ trade.commission }}</td>
+            <td>{{ trade.fun_fund }}</td>
+            <td>{{ trade.net_profit }}</td>
+        </tr>
+        {% endfor %}
+       </tbody>
+     </table>
+   </div>
+{% else %}
+   <p>No trades.</p>
+{% endif %}
+{% endblock %}
+
