@@ -47,11 +47,11 @@ class IndividualPL(models.Model):
 
     @property
     def net_profit(self):
-        return self.igpl.net_profit * self.size / self.igpl.__sizeof__()
+        return self.igpl.net_profit * self.size / self.igpl.size
 
     @property
     def gross_profit(self):
-        return self.igpl.gross_profit * self.size / self.igpl.__sizeof__()
+        return self.igpl.gross_profit * self.size / self.igpl.size
 
     def __str__(self):
         return '%s %s %s' % (self.member.user.email, self.igpl.opening_date, self.igpl.market)

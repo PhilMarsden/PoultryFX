@@ -1,6 +1,6 @@
 import os,django,csv,codecs,sys,datetime
-csv_filepathname="c:\\users\\pm\\downloads\\trades.csv"
-path = 'c:\\work\\django\\mysite\\'  # use your own username here
+csv_filepathname='C:\\Work\\\PoultryFX\\\mysite\\\imports\\trades.csv'
+path = 'C:\\Work\\\PoultryFX\\\mysite'  # use your own username here
 if path not in sys.path:
     sys.path.append(path)
 
@@ -17,31 +17,62 @@ def bootstrap_data():
 
     #u1 = User.objects.create_user('john.cooper@ensoft.com','john.cooper@ensoft.com','jellyfish')
     #u2 = User.objects.create_user('dan.shavick@softwire.com','dan.shavick@softwire.com','jellyfish')
-    #u1.save()
-    #u2.save()
-    u1 = User.objects.get(email = 'john.cooper@ensoft.com')
-    u2 = User.objects.get(email = 'dan.shavick@softwire.com')
-    u3 = User.objects.get(email = 'phil.marsden@softwire.com')
+    #u3 = User.objects.create_user('nigel.ratcliffe@ensoft.co.uk','nigel.ratcliffe@ensoft.co.uk','jellyfish')
+    #u4 = User.objects.create_user('seancurran78@googlemail.com','seancurran78@googlemail.com','jellyfish')
+    #u5 = User.objects.create_user('crowecameron@hotmail.com','crowecameron@hotmail.com','jellyfish')
+    #u3.save()
+    #u4.save()
+    #u5.save
+    u1 = User.objects.get(email='phil.marsden@softwire.com')
+    u2 = User.objects.get(email = 'john.cooper@ensoft.com')
+    u3 = User.objects.get(email = 'dan.shavick@softwire.com')
+    u4 = User.objects.get(email = 'nigel.ratcliffe@ensoft.co.uk')
+    u5 = User.objects.get(email='seancurran78@googlemail.com')
+    u6 = User.objects.get(email='crowecameron@hotmail.com')
+
     #m1 = Member(user = u1,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
     #m1.save()
-    #m2 = Member(user = u2,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
+    #m2 = Member(user = u2,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.05)
     #m2.save()
+    #m3 = Member(user = u2,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
+    #m3.save()
+    m4 = Member(user = u4,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.05)
+    m4.save()
+    m5 = Member(user = u5,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
+    m5.save()
+    m6 = Member(user = u6,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
+    m6.save()
+
+
+
     m1 = Member.objects.get(user = u1)
     m2 = Member.objects.get(user = u2)
     m3 = Member.objects.get(user = u3)
     ic1 = IndividualCash(member = m1, size = 3000, transaction_date = datetime.datetime.now())
     ic1.save()
-    ic2 = IndividualCash(member = m2, size = 3000, transaction_date = datetime.datetime.now())
+    ic2 = IndividualCash(member = m2, size = 6000, transaction_date = datetime.datetime.now())
     ic2.save()
     ic3 = IndividualCash(member = m3, size = 3000, transaction_date = datetime.datetime.now())
     ic3.save()
-    igpl1 = IGPL.objects.get(closing_ref = 'E4AL8LA2')
-    ipl1 = IndividualPL(member=m1, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
+    ic4 = IndividualCash(member = m4, size = 6000, transaction_date = datetime.datetime.now())
+    ic4.save()
+    ic5 = IndividualCash(member = m5, size = 3000, transaction_date = datetime.datetime.now())
+    ic5.save()
+    ic6 = IndividualCash(member = m6, size = 3000, transaction_date = datetime.datetime.now())
+    ic6.save()
+    igpl1 = IGPL.objects.get(closing_ref = 'FBFWWPA2')
+    ipl1 = IndividualPL(member=m1, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
     ipl1.save()
     ipl2 = IndividualPL(member=m2, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
     ipl2.save()
-    ipl3 = IndividualPL(member=m3, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
+    ipl3 = IndividualPL(member=m3, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
     ipl3.save()
+    ipl4 = IndividualPL(member=m4, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
+    ipl4.save()
+    ipl5 = IndividualPL(member=m5, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
+    ipl5.save()
+    ipl6 = IndividualPL(member=m6, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
+    ipl6.save()
 
 
 def mycsv_reader(csv_reader):
