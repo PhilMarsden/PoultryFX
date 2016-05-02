@@ -18,7 +18,7 @@ def bootstrap_data():
     models.IndividualCash.objects.all().delete()
     models.Member.objects.all().delete()
 
-    #u1 = User.objects.create_user('john.cooper@ensoft.com','john.cooper@ensoft.com','jellyfish')
+    #u1 = User.objects.create_user('john.cooper@ensoft.com','john.cooper@ensoft.co.uk','jellyfish')
     #u2 = User.objects.create_user('dan.shavick@softwire.com','dan.shavick@softwire.com','jellyfish')
     #u3 = User.objects.create_user('nigel.ratcliffe@ensoft.co.uk','nigel.ratcliffe@ensoft.co.uk','jellyfish')
     #u4 = User.objects.create_user('seancurran78@googlemail.com','seancurran78@googlemail.com','jellyfish')
@@ -27,7 +27,7 @@ def bootstrap_data():
     #u4.save()
     #u5.save
     u1 = User.objects.get(email='phil.marsden@softwire.com')
-    u2 = User.objects.get(email = 'john.cooper@ensoft.com')
+    u2 = User.objects.get(email = 'john.cooper@ensoft.co.uk')
     u3 = User.objects.get(email = 'dan.shavick@softwire.com')
     u4 = User.objects.get(email = 'nigel.ratcliffe@ensoft.co.uk')
     u5 = User.objects.get(email='seancurran78@googlemail.com')
@@ -51,9 +51,9 @@ def bootstrap_data():
     m1 = Member.objects.get(user = u1)
     m2 = Member.objects.get(user = u2)
     m3 = Member.objects.get(user = u3)
-    m4 = Member.objects.get(user = u3)
-    m5 = Member.objects.get(user = u3)
-    m6 = Member.objects.get(user = u3)
+    m4 = Member.objects.get(user = u4)
+    m5 = Member.objects.get(user = u5)
+    m6 = Member.objects.get(user = u6)
 
     ic1 = IndividualCash(member = m1, size = 3000, transaction_date = datetime.datetime.now())
     ic1.save()
@@ -96,7 +96,7 @@ def import_csv():
     #start_import = False
 
     u1 = User.objects.get(email='phil.marsden@softwire.com')
-    u2 = User.objects.get(email='john.cooper@ensoft.com')
+    u2 = User.objects.get(email='john.cooper@ensoft.co.uk')
     u3 = User.objects.get(email='dan.shavick@softwire.com')
     u4 = User.objects.get(email='nigel.ratcliffe@ensoft.co.uk')
     u5 = User.objects.get(email='seancurran78@googlemail.com')
