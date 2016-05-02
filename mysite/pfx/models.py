@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.db.models import Sum
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 class IGPL(models.Model):
     closing_ref = models.CharField(max_length=8, unique=True)
@@ -35,6 +36,23 @@ class Member(models.Model):
     current_trade_size = models.FloatField()
     current_commission = models.FloatField()
     current_fun_fund =  models.FloatField()
+    @property
+    def name(self):
+        return self.user.get_full_name()
+    @property
+    def cash_deposit(self):
+        return IndividualCash.objects.filter(member_id=self.id).aggregate(Sum('size')).get('size__sum', 0.00)
+
+    #@property
+    #def total_profit(self):
+    #    return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('net_profit')).get('net_profit__sum', 0.00)
+
+   # .aggregate(
+   #     total=Sum('progress', field="progress*estimated_days")
+   # )['total']
+
+
+
     def __str__(self):
         return '%s' % (self.user.email)
 

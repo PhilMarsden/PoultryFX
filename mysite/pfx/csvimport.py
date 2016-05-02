@@ -1,6 +1,6 @@
 import os,django,csv,codecs,sys,datetime
 csv_filepathname='C:\\Work\\\PoultryFX\\\mysite\\\imports\\trades.csv'
-path = 'C:\\Work\\\PoultryFX\\\mysite'  # use your own username here
+path = 'E:\\Work\\PoultryFX\\mysite'  # use your own username here
 if path not in sys.path:
     sys.path.append(path)
 
@@ -129,5 +129,5 @@ def import_csv():
 
 
 
-import_csv()
-bootstrap_data()
+#import_csv()
+#bootstrap_data()

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% load humanize %}
+
 {% comment %}
   Main page.
 {% endcomment %}
@@ -10,6 +13,34 @@
 
 {% block body %}
    <h1 class="page-header">Dashboard</h1>
+
+{% if member %}
+
+  <div class="table-responsive">
+    <table class="table table-bordered">
+       <tbody>
+        <tr>
+
+            <td><b>Name</b></td>
+            <td>{{member.name}}</td>
+        </tr>
+        <tr>
+
+            <td><b>Cash Deposit Total</b></td>
+            <td>{{member.cash_deposit | floatformat:2}}</td>
+        </tr>
+        <tr>
+
+            <td><b>Profit before deductions</b></td>
+            <td>{{member.profit_before_deductions | floatformat:2}}</td>
+        </tr>
+       </tbody>
+     </table>
+   </div>
+{% else %}
+   <p>No member information.</p>
+{% endif %}
+
 
 {% if trades %}
 

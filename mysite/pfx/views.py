@@ -12,6 +12,7 @@ def profile(request):
     template = loader.get_template('pfx/profile.html')
     context = {
         'trades': trades,
+        'member' : m,
     }
     return HttpResponse(template.render(context, request))
 
