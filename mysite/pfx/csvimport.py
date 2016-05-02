@@ -1,5 +1,5 @@
 import os,django,csv,codecs,sys,datetime
-csv_filepathname='C:\\Work\\\PoultryFX\\\mysite\\\imports\\trades.csv'
+csv_filepathname='E:\\Work\\\PoultryFX\\\mysite\\\imports\\trades.csv'
 path = 'E:\\Work\\PoultryFX\\mysite'  # use your own username here
 if path not in sys.path:
     sys.path.append(path)
@@ -9,11 +9,14 @@ django.setup()
 
 from django.contrib.auth.models import User
 from pfx import models
+from pfx.models import Member, IGPL, IndividualPL, IndividualCash
+
 
 def bootstrap_data():
     from pfx.models import Member,IGPL,IndividualPL,IndividualCash
     models.IndividualPL.objects.all().delete()
     models.IndividualCash.objects.all().delete()
+    models.Member.objects.all().delete()
 
     #u1 = User.objects.create_user('john.cooper@ensoft.com','john.cooper@ensoft.com','jellyfish')
     #u2 = User.objects.create_user('dan.shavick@softwire.com','dan.shavick@softwire.com','jellyfish')
@@ -30,17 +33,17 @@ def bootstrap_data():
     u5 = User.objects.get(email='seancurran78@googlemail.com')
     u6 = User.objects.get(email='crowecameron@hotmail.com')
 
-    #m1 = Member(user = u1,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
-    #m1.save()
-    #m2 = Member(user = u2,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.05)
-    #m2.save()
-    #m3 = Member(user = u2,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
-    #m3.save()
-    m4 = Member(user = u4,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.05)
+    m1 = Member(user = u1,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
+    m1.save()
+    m2 = Member(user = u2,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.01)
+    m2.save()
+    m3 = Member(user = u3,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
+    m3.save()
+    m4 = Member(user = u4,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.01)
     m4.save()
-    m5 = Member(user = u5,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
+    m5 = Member(user = u5,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
     m5.save()
-    m6 = Member(user = u6,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.05)
+    m6 = Member(user = u6,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
     m6.save()
 
 
@@ -48,6 +51,10 @@ def bootstrap_data():
     m1 = Member.objects.get(user = u1)
     m2 = Member.objects.get(user = u2)
     m3 = Member.objects.get(user = u3)
+    m4 = Member.objects.get(user = u3)
+    m5 = Member.objects.get(user = u3)
+    m6 = Member.objects.get(user = u3)
+
     ic1 = IndividualCash(member = m1, size = 3000, transaction_date = datetime.datetime.now())
     ic1.save()
     ic2 = IndividualCash(member = m2, size = 6000, transaction_date = datetime.datetime.now())
@@ -60,19 +67,20 @@ def bootstrap_data():
     ic5.save()
     ic6 = IndividualCash(member = m6, size = 3000, transaction_date = datetime.datetime.now())
     ic6.save()
-    igpl1 = IGPL.objects.get(closing_ref = 'FBFWWPA2')
-    ipl1 = IndividualPL(member=m1, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
-    ipl1.save()
-    ipl2 = IndividualPL(member=m2, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
-    ipl2.save()
-    ipl3 = IndividualPL(member=m3, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
-    ipl3.save()
-    ipl4 = IndividualPL(member=m4, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
-    ipl4.save()
-    ipl5 = IndividualPL(member=m5, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
-    ipl5.save()
-    ipl6 = IndividualPL(member=m6, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
-    ipl6.save()
+
+    #igpl1 = IGPL.objects.get(closing_ref = 'FBFWWPA2')
+    #ipl1 = IndividualPL(member=m1, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
+    #ipl1.save()
+    #ipl2 = IndividualPL(member=m2, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
+    #ipl2.save()
+    #ipl3 = IndividualPL(member=m3, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
+    #ipl3.save()
+    #ipl4 = IndividualPL(member=m4, igpl=igpl1, size=10, commission=0.05, fun_fund=0.01)
+    #ipl4.save()
+    #ipl5 = IndividualPL(member=m5, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
+    #ipl5.save()
+    #ipl6 = IndividualPL(member=m6, igpl=igpl1, size=5, commission=0.05, fun_fund=0.01)
+    #ipl6.save()
 
 
 def mycsv_reader(csv_reader):
@@ -87,6 +95,20 @@ def import_csv():
     #dataReader = csv.reader(open(csv_filepathname, 'rU'), dialect='excel-tab')
     #start_import = False
 
+    u1 = User.objects.get(email='phil.marsden@softwire.com')
+    u2 = User.objects.get(email='john.cooper@ensoft.com')
+    u3 = User.objects.get(email='dan.shavick@softwire.com')
+    u4 = User.objects.get(email='nigel.ratcliffe@ensoft.co.uk')
+    u5 = User.objects.get(email='seancurran78@googlemail.com')
+    u6 = User.objects.get(email='crowecameron@hotmail.com')
+
+    m1 = Member.objects.get(user = u1)
+    m2 = Member.objects.get(user = u2)
+    m3 = Member.objects.get(user = u3)
+    m4 = Member.objects.get(user = u3)
+    m5 = Member.objects.get(user = u3)
+    m6 = Member.objects.get(user = u3)
+
     reader = mycsv_reader(csv.reader(open(csv_filepathname, encoding='utf-16', mode='rU'), dialect='excel-tab'))
     start_import = False
 
@@ -94,6 +116,7 @@ def import_csv():
 
     for row in reader:
         if start_import:
+            print(row)
             igpl = models.IGPL()
             igpl.closing_ref = row[0]
             igpl.closed_date = datetime.datetime.strptime(row[1], "%d/%m/%y").strftime("%Y-%m-%d")
@@ -121,13 +144,15 @@ def import_csv():
             igpl.save()
             print("Imported",row[0])
 
+            #ipl1 = IndividualPL(member=m1, igpl=igpl)
+            #ipl1.save()
+
+
         try:
             if row[0] == 'Closing Ref':
                 start_import = True
         except:
             start_import = False
 
-
-
-#import_csv()
-#bootstrap_data()
+bootstrap_data()
+import_csv()

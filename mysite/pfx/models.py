@@ -24,6 +24,14 @@ class IGPL(models.Model):
     commccy = models.FloatField()
     comm = models.FloatField()
     net_profit = models.FloatField()
+
+    def save(self, *args, **kwargs):
+        super(IGPL, self).save(*args, **kwargs) # Call the "real" save() method.
+        member_list = Member.objects.all()
+        for m1 in member_list:
+            ipl1 = IndividualPL(member=m1, igpl=self)
+            ipl1.save()
+
     def __str__(self):
         return '%s %s' % (self.opening_ref, self.opening_date)
     class Meta:
@@ -39,19 +47,23 @@ class Member(models.Model):
     @property
     def name(self):
         return self.user.get_full_name()
+
     @property
     def cash_deposit(self):
         return IndividualCash.objects.filter(member_id=self.id).aggregate(Sum('size')).get('size__sum', 0.00)
 
-    #@property
-    #def total_profit(self):
-    #    return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('net_profit')).get('net_profit__sum', 0.00)
+    @property
+    def profit(self):
+        return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum', 0.00) + self.deductions
 
-   # .aggregate(
-   #     total=Sum('progress', field="progress*estimated_days")
-   # )['total']
+    @property
+    def deductions(self):
+         return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('commission')).get('commission__sum', 0.00) + \
+                IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('fun_fund')).get('fun_fund__sum', 0.00)
 
-
+    @property
+    def balance(self):
+        return self.cash_deposit + self.profit
 
     def __str__(self):
         return '%s' % (self.user.email)
@@ -59,17 +71,26 @@ class Member(models.Model):
 class IndividualPL(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
     igpl = models.ForeignKey(IGPL, on_delete=models.CASCADE)
-    size = models.FloatField()
-    commission = models.FloatField()
-    fun_fund = models.FloatField()
+    profit = models.FloatField(default=0)
+    commission = models.FloatField(default=0)
+    fun_fund = models.FloatField(default=0)
+
+    @property
+    def deductions(self):
+        return  (self.commission + self.fun_fund)
 
     @property
     def net_profit(self):
-        return self.igpl.net_profit * self.size / self.igpl.size
+        return self.profit + self.deductions
 
-    @property
-    def gross_profit(self):
-        return self.igpl.gross_profit * self.size / self.igpl.size
+    #def default_profit(self):
+    #    return 1.0
+
+    def save(self, *args, **kwargs):
+        self.profit = self.igpl.net_profit * self.member.current_trade_size / Member.objects.all().aggregate(Sum('current_trade_size')).get('current_trade_size__sum',0.00)
+        self.fun_fund = - max(self.profit * self.member.current_fun_fund,0.0)
+        self.commission = - max(self.profit * self.member.current_commission,0.0)
+        super(IndividualPL, self).save(*args, **kwargs) # Call the "real" save() method.
 
     def __str__(self):
         return '%s %s %s' % (self.member.user.email, self.igpl.opening_date, self.igpl.market)

@@ -27,13 +27,15 @@
         <tr>
 
             <td><b>Cash Deposit Total</b></td>
-            <td>{{member.cash_deposit | floatformat:2}}</td>
+            <td>£{{member.cash_deposit | floatformat:2}}</td>
         </tr>
         <tr>
-
-            <td><b>Profit before deductions</b></td>
-            <td>{{member.profit_before_deductions | floatformat:2}}</td>
+            <td><b>Net Profit</b></td>
+            <td>£{{member.profit | floatformat:2}}</td>
         </tr>
+         <tr>
+            <td><b>Balance</b></td>
+            <td>£{{member.balance | floatformat:2}}</td>
        </tbody>
      </table>
    </div>
@@ -48,12 +50,11 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>Ref</th>
+          <th>Date</th>
           <th>Market</th>
           <th>Direction</th>
           <th>Opening Price</th>
           <th>Closing Price</th>
-          <th>Size</th>
           <th>Gross profit</th>
           <th>Commission</th>
           <th>Fun Fund</th>
@@ -63,16 +64,15 @@
        <tbody>
         {% for trade in trades %}
         <tr>
-            <td>{{ trade.igpl.opening_ref }}</td>
+            <td>{{ trade.igpl.closed_date }}</td>
             <td>{{ trade.igpl.market }}</td>
             <td>{{ trade.igpl.direction }}</td>
             <td>{{ trade.igpl.opening_price }}</td>
             <td>{{ trade.igpl.closing_price }}</td>
-            <td>{{ trade.size }}</td>
-            <td>{{ trade.gross_profit }}</td>
-            <td>{{ trade.commission }}</td>
-            <td>{{ trade.fun_fund }}</td>
-            <td>{{ trade.net_profit }}</td>
+            <td>£{{ trade.profit }}</td>
+            <td>£{{ trade.commission }}</td>
+            <td>£{{ trade.fun_fund }}</td>
+            <td>£{{ trade.net_profit }}</td>
         </tr>
         {% endfor %}
        </tbody>
