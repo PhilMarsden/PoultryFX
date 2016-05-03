@@ -2,18 +2,22 @@ from socket import gethostname
 from rest_framework import status
 import requests
 import json
+import os
 
-my_hostname = gethostname()
-if (my_hostname == 'pm-django.zoo.lan'):
+from django.conf import global_settings
+
+if os.environ.get('DJANGO_DEVELOPMENT', None):
+    ig_apikey = "29f8743c1acb4f1b53c5a128d956c4a27b4ce7e3"
+    ig_identifier = "phildemo"
+    ig_password = "UNKNOWN"
+    ig_url = "https://demo-api.ig.com/gateway/deal/"
+elif os.environ.get('DJANGO_PRODUCTION', None):
     ig_apikey = "3d7e3de3996b7ca0187a3964522a3125df13d641"
     ig_identifier = "philmarsden"
     ig_password = "UNKNOWN"
     ig_url = "https://api.ig.com/gateway/deal/"
 else:
-    ig_apikey = "29f8743c1acb4f1b53c5a128d956c4a27b4ce7e3"
-    ig_identifier = "phildemo"
-    ig_password = "UNKNOWN"
-    ig_url = "https://demo-api.ig.com/gateway/deal/"
+    raise Exception("Please set one of DJANGO_DEVELOPMENT or DJANGO_PRODUCTION")
 
 ig_securitytoken = ""
 ig_cst = ""
