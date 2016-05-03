@@ -22,7 +22,7 @@ def profile(request):
 def ig_view(request):
     if ig_rest.need_password():
         if request.method == 'POST':
-            print (request.POST['password'])
+            #print (request.POST['password'])
             # create a form instance and populate it with data from the request:
             ig_rest.set_password(request.POST['password'])
             ig_rest.login()

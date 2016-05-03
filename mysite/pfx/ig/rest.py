@@ -48,7 +48,7 @@ class ig_rest:
 
         resp = requests.post(ig_url + 'session', json=body, headers=headers)
 
-        print (resp.status_code)
+        #print (resp.status_code)
 
         global ig_cst,ig_securitytoken,ig_account_id
         ig_cst = resp.headers["CST"]
@@ -57,8 +57,8 @@ class ig_rest:
         json_data = json.loads(resp.text)
         ig_account_id = json_data["accounts"][0]["accountId"]
 
-        print(ig_cst)
-        print(ig_securitytoken)
+        #print(ig_cst)
+        #print(ig_securitytoken)
 
         return 0
 
