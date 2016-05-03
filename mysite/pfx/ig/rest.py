@@ -10,6 +10,7 @@ if os.environ.get('DJANGO_DEVELOPMENT', None):
     ig_apikey = "363fcb5c8b48e173ca115738967de2534021686d"
     ig_identifier = "phildemo2"
     ig_password = "Jellyfish_123"
+    ig_password = "UNKNOWN"
     ig_url = "https://demo-api.ig.com/gateway/deal/"
 elif os.environ.get('DJANGO_PRODUCTION', None):
     ig_apikey = "3d7e3de3996b7ca0187a3964522a3125df13d641"
@@ -95,12 +96,13 @@ class ig_rest:
         }
 
         resp = requests.get(ig_url + 'positions', headers=req_headers)
-        json_data = json.loads(resp.text)
-        #print(json.dumps(json_data,indent=4))
-        for position in json_data["positions"]:
-            ig_pos = ig_position(position)
-            ret_val.append(ig_pos)
-        #print (ret_val)
+        if (resp.status_code == 200):
+            json_data = json.loads(resp.text)
+            #print(json.dumps(json_data,indent=4))
+            for position in json_data["positions"]:
+                ig_pos = ig_position(position)
+                ret_val.append(ig_pos)
+            #print (ret_val)
 
         return ret_val
 
