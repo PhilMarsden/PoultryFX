@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block body %}
-   <h1 class="page-header">Dashboard</h1>
+   <h1 class="page-header">Account Summary</h1>
 
 {% if member %}
 
@@ -40,8 +40,48 @@
      </table>
    </div>
 {% else %}
-   <p>No member information.</p>
+    <h3 class="page-header">No account information</h3>
 {% endif %}
+
+<h1 class="page-header">Open positions</h1>
+
+{% if positions %}
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Instrument</th>
+          <th>Size</th>
+          <th>Direction</th>
+          <th>Start</th>
+          <th>Limit</th>
+          <th>Stop</th>
+          <th>Price</th>
+          <th>Profit</th>
+        </tr>
+       </thead>
+       <tbody>
+        {% for position in positions %}
+        <tr>
+            <td>{{ position.ig_pos_instrument }}</td>
+            <td>{{ position.ig_pos_size }}</td>
+            <td>{{ position.ig_pos_direction }}</td>
+            <td>{{ position.ig_pos_start_level }}</td>
+            <td>{{ position.ig_pos_limit }}</td>
+            <td>{{ position.ig_pos_stop }}</td>
+            <td>{{ position.ig_pos_price }}</td>
+            <td>{{ position.ig_pos_profit }}</td>
+        </tr>
+        {% endfor %}
+       </tbody>
+     </table>
+   </div>
+{% else %}
+    <h3 class="page-header">No open positions</h3>
+{% endif %}
+
+<h1 class="page-header">Completed Trades</h1>
 
 
 {% if trades %}
@@ -81,7 +121,7 @@
      </table>
    </div>
 {% else %}
-   <p>No trades.</p>
+    <h3 class="page-header">No completed trades</h3>
 {% endif %}
 {% endblock %}
 

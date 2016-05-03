@@ -7,9 +7,9 @@ import os
 from django.conf import global_settings
 
 if os.environ.get('DJANGO_DEVELOPMENT', None):
-    ig_apikey = "29f8743c1acb4f1b53c5a128d956c4a27b4ce7e3"
-    ig_identifier = "phildemo"
-    ig_password = "UNKNOWN"
+    ig_apikey = "363fcb5c8b48e173ca115738967de2534021686d"
+    ig_identifier = "phildemo2"
+    ig_password = "Jellyfish_123"
     ig_url = "https://demo-api.ig.com/gateway/deal/"
 elif os.environ.get('DJANGO_PRODUCTION', None):
     ig_apikey = "3d7e3de3996b7ca0187a3964522a3125df13d641"
@@ -27,8 +27,19 @@ class ig_rest:
     @staticmethod
     def need_password():
         if (ig_password == "UNKNOWN"):
+            #print("Password UNKNOWN")
             return True
         else:
+            #print("Password entered")
+            return False
+
+    @staticmethod
+    def need_login():
+        if (ig_cst == ""):
+            #print("Login Needed")
+            return True
+        else:
+            #print("CST Set - Login performed")
             return False
 
     @staticmethod
@@ -42,6 +53,7 @@ class ig_rest:
 
     @staticmethod
     def login():
+        global ig_password
         body = {
             "identifier": ig_identifier,
             "password": ig_password
@@ -52,14 +64,20 @@ class ig_rest:
 
         resp = requests.post(ig_url + 'session', json=body, headers=headers)
 
-        #print (resp.status_code)
+        if (resp.status_code == 200):
+            global ig_cst,ig_securitytoken,ig_account_id
+            ig_cst = resp.headers["CST"]
+            ig_securitytoken = resp.headers["X-SECURITY-TOKEN"]
 
-        global ig_cst,ig_securitytoken,ig_account_id
-        ig_cst = resp.headers["CST"]
-        ig_securitytoken = resp.headers["X-SECURITY-TOKEN"]
-
-        json_data = json.loads(resp.text)
-        ig_account_id = json_data["accounts"][0]["accountId"]
+            json_data = json.loads(resp.text)
+            ig_account_id = json_data["accounts"][0]["accountId"]
+        else:
+            #print("Login failed - Restting password to Unknown, response code " + str(resp.status_code))
+            #print(body)
+            #print(headers)
+            #print(resp.url)
+            print(resp.content)
+            ig_password = "UNKNOWN"
 
         #print(ig_cst)
         #print(ig_securitytoken)
@@ -180,3 +198,8 @@ class ig_transaction:
         self.ig_trans_instrument = json_position['market']['instrumentName']
         self.ig_trans_bid = json_position['market']['bid']
         self.ig_trans_offer = json_position['market']['offer']
+
+
+if (ig_rest.need_password() == False):
+    ig_rest.login()
+
