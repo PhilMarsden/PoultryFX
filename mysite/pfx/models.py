@@ -71,6 +71,7 @@ class Member(models.Model):
 class IndividualPL(models.Model):
     member = models.ForeignKey(Member, on_delete=models.CASCADE)
     igpl = models.ForeignKey(IGPL, on_delete=models.CASCADE)
+    size = models.FloatField(default=0)
     profit = models.FloatField(default=0)
     commission = models.FloatField(default=0)
     fun_fund = models.FloatField(default=0)
@@ -87,6 +88,7 @@ class IndividualPL(models.Model):
     #    return 1.0
 
     def save(self, *args, **kwargs):
+        self.size = self.igpl.size * self.member.current_trade_size / Member.objects.all().aggregate(Sum('current_trade_size')).get('current_trade_size__sum',0.00)
         self.profit = self.igpl.net_profit * self.member.current_trade_size / Member.objects.all().aggregate(Sum('current_trade_size')).get('current_trade_size__sum',0.00)
         self.fun_fund = - max(self.profit * self.member.current_fun_fund,0.0)
         self.commission = - max(self.profit * self.member.current_commission,0.0)
