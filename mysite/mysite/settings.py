@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+from socket import gethostname
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -23,7 +24,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'p$4nw08dpy41l1ipp2+fc8!4*b&hq6g(96$7pzd)2q5$x6ryv5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+my_hostname = gethostname()
+if (my_hostname == 'pm-django.zoo.lan'):
+    DEBUG = False
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = []
 
