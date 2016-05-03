@@ -1,6 +1,19 @@
+from socket import gethostname
 import os,django,csv,codecs,sys,datetime
-csv_filepathname='C:\\Work\\\PoultryFX\\\mysite\\\imports\\trades.csv'
-path = 'C:\\Work\\PoultryFX\\mysite'  # use your own username here
+
+my_hostname = gethostname()
+if (my_hostname == 'pm-django.zoo.lan'):
+    DEBUG = False
+    ALLOWED_HOSTS = ['poultryfx.com']
+    csv_filepathname = '/home/softwire/PoultryFX/mysite/imports/trades.csv'
+    path = '/home/softwire/PoultryFX/mysite'  # use your own username here
+else:
+    DEBUG = True
+    ALLOWED_HOSTS = []
+    csv_filepathname='C:\\Work\\\PoultryFX\\\mysite\\\imports\\trades.csv'
+    path = 'C:\\Work\\PoultryFX\\mysite'  # use your own username here
+
+
 if path not in sys.path:
     sys.path.append(path)
 
