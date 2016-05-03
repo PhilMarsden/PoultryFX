@@ -27,10 +27,11 @@ SECRET_KEY = 'p$4nw08dpy41l1ipp2+fc8!4*b&hq6g(96$7pzd)2q5$x6ryv5'
 my_hostname = gethostname()
 if (my_hostname == 'pm-django.zoo.lan'):
     DEBUG = False
+    ALLOWED_HOSTS = ['poultryfx.com']
 else:
     DEBUG = True
+    ALLOWED_HOSTS = []
 
-ALLOWED_HOSTS = []
 
 EMAIL_HOST = 'smtp.zoo.lan'
 EMAIL_PORT = 25
