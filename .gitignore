@@ -3,3 +3,4 @@ mysite/pfx/static/pfx/bootstrap/docs/_includes/components/labels.html
 mysite/pfx/static/pfx/bootstrap/
 .idea/
 *.pyc
+mysite/db.sqlite3
