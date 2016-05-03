@@ -52,10 +52,8 @@
             {% endif %}
             {% if user.is_authenticated %}
               <li><a href="#">{{ user }}</a></li>
-            {% endif %}
-              <li><a href="#">Dashboard</a></li>
-            {% if user.is_authenticated %}
               <li><a href="/accounts/logout">Logout</a></li>
+              <li><a href="/accounts/password_change">Change Password</a></li>
             {% else %}
               <li><a href="/accounts/login">Login</a></li>
             {% endif %}
