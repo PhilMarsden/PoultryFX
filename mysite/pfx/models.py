@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.contrib.humanize.templatetags.humanize import intcomma
 
+def total_fun_fund():
+    return IndividualPL.objects.all().aggregate(Sum('fun_fund')).get('fun_fund__sum',0.00)
+
 class IGPL(models.Model):
     closing_ref = models.CharField(max_length=8, unique=True)
     closed_date = models.DateField()

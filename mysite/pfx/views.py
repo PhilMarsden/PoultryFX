@@ -1,7 +1,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.decorators import login_required
-from pfx.models import Member
+from pfx.models import Member,total_fun_fund
 from pfx.ig.rest import ig_rest
 
 from .models import IGPL,IndividualPL,IndividualCash
@@ -10,12 +10,14 @@ from .models import IGPL,IndividualPL,IndividualCash
 def profile(request):
     m = Member.objects.get(user = request.user)
     trades = IndividualPL.objects.filter(member = m)
-    positions = ig_rest.get_positions()
+    positions = ig_rest.get_positions(member = m)
+    fun_fund = -total_fun_fund()
     template = loader.get_template('pfx/profile.html')
     context = {
         'trades': trades,
         'member' : m,
-        'positions': positions
+        'positions': positions,
+        'fun_fund' : fun_fund
     }
     return HttpResponse(template.render(context, request))
 
