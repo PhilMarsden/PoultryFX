@@ -46,7 +46,7 @@ def bootstrap_data():
     u5 = User.objects.get(email='seancurran78@googlemail.com')
     u6 = User.objects.get(email='crowecameron@hotmail.com')
 
-    m1 = Member(user = u1,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
+    m1 = Member(user = u1,current_trade_size = 10,current_commission = -0.05, current_fun_fund = 0.01)
     m1.save()
     m2 = Member(user = u2,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.01)
     m2.save()
@@ -68,7 +68,7 @@ def bootstrap_data():
     m5 = Member.objects.get(user = u5)
     m6 = Member.objects.get(user = u6)
 
-    ic1 = IndividualCash(member = m1, size = 3000, transaction_date = datetime.datetime.now())
+    ic1 = IndividualCash(member = m1, size = 3340, transaction_date = datetime.datetime.now())
     ic1.save()
     ic2 = IndividualCash(member = m2, size = 6000, transaction_date = datetime.datetime.now())
     ic2.save()
