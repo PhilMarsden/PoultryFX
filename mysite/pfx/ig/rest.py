@@ -1,6 +1,13 @@
 import requests
 import json
 from pfx.ig.rest_private import *
+# import the logging library
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+print("enable logging " + __name__)
+logger.info('IG REST Initialised')
 
 ig_securitytoken = ""
 ig_cst = ""
