@@ -49,6 +49,10 @@ class Member(models.Model):
         return self.user.get_full_name()
 
     @property
+    def percentage_of_trades(self):
+        return (self.current_trade_size / Member.objects.all().aggregate(Sum('current_trade_size')).get('current_trade_size__sum',0.00))
+
+    @property
     def cash_deposit(self):
         return IndividualCash.objects.filter(member_id=self.id).aggregate(Sum('size')).get('size__sum', 0.00)
 
@@ -88,8 +92,8 @@ class IndividualPL(models.Model):
     #    return 1.0
 
     def save(self, *args, **kwargs):
-        self.size = self.igpl.size * self.member.current_trade_size / Member.objects.all().aggregate(Sum('current_trade_size')).get('current_trade_size__sum',0.00)
-        self.profit = self.igpl.net_profit * self.member.current_trade_size / Member.objects.all().aggregate(Sum('current_trade_size')).get('current_trade_size__sum',0.00)
+        self.size = self.igpl.size * percentage_of_trades
+        self.profit = self.igpl.net_profit * percentage_of_trades
         self.fun_fund = - max(self.profit * self.member.current_fun_fund,0.0)
         self.commission = - max(self.profit * self.member.current_commission,0.0)
         super(IndividualPL, self).save(*args, **kwargs) # Call the "real" save() method.

@@ -3,7 +3,7 @@ from rest_framework import status
 import requests
 import json
 import os
-
+from pfx.models import Member
 from django.conf import global_settings
 
 if os.environ.get('DJANGO_DEVELOPMENT', None):
@@ -86,7 +86,7 @@ class ig_rest:
         return 0
 
     @staticmethod
-    def get_positions():
+    def get_positions(member = None):
         ret_val = []
         req_headers = {
             "X-IG-API-KEY": ig_apikey,
@@ -100,7 +100,7 @@ class ig_rest:
             json_data = json.loads(resp.text)
             #print(json.dumps(json_data,indent=4))
             for position in json_data["positions"]:
-                ig_pos = ig_position(position)
+                ig_pos = ig_position(position,member)
                 ret_val.append(ig_pos)
             #print (ret_val)
 
@@ -153,9 +153,12 @@ class ig_position:
         else:
             return round(self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_price),2)
 
-    def __init__(self,json_position):
+    def __init__(self,json_position, member = None):
+        percentage_to_apply = 1
+        if (member != None):
+            percentage_to_apply = member.percentage_of_trades
         #print(json_position['position']['size'])
-        self.ig_pos_size = json_position['position']['size']
+        self.ig_pos_size = json_position['position']['size'] * percentage_to_apply
         self.ig_pos_limit = json_position['position']['limitLevel']
         self.ig_pos_stop = json_position['position']['stopLevel']
         self.ig_pos_direction = json_position['position']['direction']
