@@ -93,7 +93,8 @@ class ig_rest:
                 ig_pos = ig_position(position,member)
                 ret_val.append(ig_pos)
             #print (ret_val)
-
+        else:
+            logger.error('** Failed to get positions : {}'.format(str(resp.status_code)))
         return ret_val
 
 
@@ -114,12 +115,14 @@ class ig_rest:
         logger.debug('time in milliseconds = {}'.format(time_period))
 
         resp = requests.get(ig_url + 'history/activity/' + str(time_period), headers=req_headers)
-        json_data = json.loads(resp.text)
-        logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
-        for act_i in json_data["activities"]:
-            activity = ig_activity(act_i)
-            ret_val.append(activity)
-
+        if (resp.status_code == 200):
+            json_data = json.loads(resp.text)
+            logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
+            for act_i in json_data["activities"]:
+                activity = ig_activity(act_i)
+                ret_val.append(activity)
+        else:
+            logger.error('** Failed to get activities : {}'.format(str(resp.status_code)))
         return ret_val
 
 
