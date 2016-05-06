@@ -19,7 +19,7 @@
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>Instrument</th>
+          <th>Deal ID</th>
           <th>Size</th>
           <th>Direction</th>
           <th>Start</th>
@@ -32,6 +32,7 @@
        <tbody>
         {% for position in positions %}
         <tr>
+            <td>{{ position.ig_pos_dealid }}</td>
             <td>{{ position.ig_pos_instrument }}</td>
             <td>{{ position.ig_pos_size }}</td>
             <td>{{ position.ig_pos_direction }}</td>
@@ -47,6 +48,45 @@
    </div>
 {% else %}
    <p>No positions.</p>
+{% endif %}
+
+   <h1 class="page-header">Activity</h1>
+{% if activities %}
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Date Time</th>
+          <th>DealID</th>
+          <th>Activity</th>
+          <th>Result</th>
+          <th>Limit</th>
+          <th>Level</th>
+          <th>Stop</th>
+          <th>Market</th>
+          <th>Size</th>
+        </tr>
+       </thead>
+       <tbody>
+        {% for act in activities %}
+        <tr>
+            <td>{{ act.ig_act_datetime }}</td>
+            <td>{{ act.ig_act_dealid }}</td>
+            <td>{{ act.ig_act_activity }}</td>
+            <td>{{ act.ig_act_result }}</td>
+            <td>{{ act.ig_act_limit }}</td>
+            <td>{{ act.ig_act_level  }}</td>
+            <td>{{ act.ig_act_stop  }}</td>
+            <td>{{ act.ig_act_marketName }}</td>
+            <td>{{ act.ig_act_size  }}</td>
+        </tr>
+        {% endfor %}
+       </tbody>
+     </table>
+   </div>
+{% else %}
+   <p>No activity.</p>
 {% endif %}
 
 {% endblock %}

@@ -6,7 +6,6 @@ import logging
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
-print("enable logging " + __name__)
 logger.info('IG REST Initialised')
 
 ig_securitytoken = ""
@@ -76,6 +75,8 @@ class ig_rest:
 
     @staticmethod
     def get_positions(member = None):
+        global logger
+        logger.info('Get positions')
         ret_val = []
         req_headers = {
             "X-IG-API-KEY": ig_apikey,
@@ -87,7 +88,7 @@ class ig_rest:
         resp = requests.get(ig_url + 'positions', headers=req_headers)
         if (resp.status_code == 200):
             json_data = json.loads(resp.text)
-            #print(json.dumps(json_data,indent=4))
+            logger.debug('Positions {}'.format(json.dumps(json_data, indent=4)))
             for position in json_data["positions"]:
                 ig_pos = ig_position(position,member)
                 ret_val.append(ig_pos)
@@ -97,22 +98,27 @@ class ig_rest:
 
 
     @staticmethod
-    def get_transactions():
+    def get_activity():
+        logger.info('Get activity')
         ret_val = []
         req_headers = {
             "X-IG-API-KEY": ig_apikey,
             "X-SECURITY-TOKEN": ig_securitytoken,
             "CST": ig_cst,
-            "Version": 2
+            "Version": 1
         }
 
-        resp = requests.get(ig_url + 'history/transactions', headers=req_headers)
+        num_hours = 24 * 14
+        time_period = 1000 * 60 * 60 * num_hours
+
+        logger.debug('time in milliseconds = {}'.format(time_period))
+
+        resp = requests.get(ig_url + 'history/activity/' + str(time_period), headers=req_headers)
         json_data = json.loads(resp.text)
-        #print(json.dumps(json_data, indent=4))
-        for trans in json_data["transactions"]:
-            transaction = ig_transaction(trans)
-            ret_val.append(transaction)
-        #print(ret_val)
+        logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
+        for act_i in json_data["activities"]:
+            activity = ig_activity(act_i)
+            ret_val.append(activity)
 
         return ret_val
 
@@ -126,6 +132,7 @@ class ig_position:
     ig_pos_instrument = None
     ig_pos_bid = None
     ig_pos_offer = None
+    ig_pos_dealid = None
 
     @property
     def ig_pos_price(self):
@@ -155,45 +162,32 @@ class ig_position:
         self.ig_pos_instrument = json_position['market']['instrumentName']
         self.ig_pos_bid = json_position['market']['bid']
         self.ig_pos_offer = json_position['market']['offer']
+        self.ig_pos_dealid = json_position['position']['dealId']
 
 
-class ig_transaction:
-    ig_trans_size = None
-    ig_trans_limit = None
-    ig_trans_stop = None
-    ig_trans_direction = None
-    ig_trans_start_level = None
-    ig_trans_instrument = None
-    ig_trans_bid = None
-    ig_trans_offer = None
-
-    @property
-    def ig_trans_price(self):
-        if self.ig_trans_direction == "BUY":
-            return self.ig_trans_bid
-        else:
-            return self.ig_trans_offer
-
-
-    @property
-    def ig_trans_profit(self):
-        if self.ig_trans_direction == "BUY":
-            return round(self.ig_trans_size * (self.ig_trans_price - self.ig_trans_start_level),2)
-        else:
-            return round(self.ig_trans_size * (self.ig_trans_start_level - self.ig_trans_price),2)
+class ig_activity:
+    ig_act_activity = None
+    ig_act_result = None
+    ig_act_limit = None
+    ig_act_marketName = None
+    ig_act_stop = None
+    ig_act_level = None
+    ig_act_size = None
+    ig_act_dealid = None
+    ig_act_datetime = None
 
     def __init__(self,json_position):
-        #print(json_position['position']['size'])
-        self.ig_trans_size = json_position['position']['size']
-        self.ig_trans_limit = json_position['position']['limitLevel']
-        self.ig_trans_stop = json_position['position']['stopLevel']
-        self.ig_trans_direction = json_position['position']['direction']
-        self.ig_trans_start_level = json_position['position']['level']
-        self.ig_trans_instrument = json_position['market']['instrumentName']
-        self.ig_trans_bid = json_position['market']['bid']
-        self.ig_trans_offer = json_position['market']['offer']
-
+        self.ig_act_activity = json_position['activity']
+        self.ig_act_result = json_position['result']
+        self.ig_act_limit = json_position['limit']
+        self.ig_act_marketName = json_position['marketName']
+        self.ig_act_stop = json_position['stop']
+        self.ig_act_level = json_position['level']
+        self.ig_act_size = json_position['size']
+        self.ig_act_dealid = json_position['dealId']
+        self.ig_act_datetime = json_position['date'] + json_position['time']
 
 if (ig_rest.need_password() == False):
     ig_rest.login()
 
+ig_rest.get_activity()
