@@ -14,6 +14,8 @@ ig_cst = ""
 ig_account_id = ""
 ig_positions = []
 ig_positions_datetime = None
+ig_activities = []
+ig_activities_datetime = None
 
 class ig_rest:
     @staticmethod
@@ -110,36 +112,49 @@ class ig_rest:
             ig_positions_datetime = datetime.now()
         else:
             logger.debug('Take positions from cache')
-
         return ig_positions
-
 
     @staticmethod
     def get_activity():
+        global logger, ig_activities,ig_activities_datetime
         logger.info('Get activity')
-        ret_val = []
-        req_headers = {
-            "X-IG-API-KEY": ig_apikey,
-            "X-SECURITY-TOKEN": ig_securitytoken,
-            "CST": ig_cst,
-            "Version": 1
-        }
 
-        num_hours = 24 * 14
-        time_period = 1000 * 60 * 60 * num_hours
-
-        logger.debug('time in milliseconds = {}'.format(time_period))
-
-        resp = requests.get(ig_url + 'history/activity/' + str(time_period), headers=req_headers)
-        if (resp.status_code == 200):
-            json_data = json.loads(resp.text)
-            #logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
-            for act_i in json_data["activities"]:
-                activity = ig_activity(act_i)
-                ret_val.append(activity)
+        refresh_positions = False
+        if (ig_activities_datetime == None):
+            logger.debug('First time getting activity')
+            refresh_positions = True
         else:
-            logger.error('** Failed to get activities : {}'.format(str(resp.status_code)))
-        return ret_val
+            if (datetime.now() > (ig_activities_datetime + timedelta(seconds = 10))):
+                logger.debug('Activity out of date, refresh')
+                refresh_positions = True
+        if (refresh_positions):
+            ig_activities = []
+            req_headers = {
+                "X-IG-API-KEY": ig_apikey,
+                "X-SECURITY-TOKEN": ig_securitytoken,
+                "CST": ig_cst,
+                "Version": 1
+            }
+
+            num_hours = 24 * 14
+            time_period = 1000 * 60 * 60 * num_hours
+
+            logger.debug('time in milliseconds = {}'.format(time_period))
+
+            resp = requests.get(ig_url + 'history/activity/' + str(time_period), headers=req_headers)
+            if (resp.status_code == 200):
+                json_data = json.loads(resp.text)
+                #logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
+                for act_i in json_data["activities"]:
+                    activity = ig_activity(act_i)
+                    ig_activities.append(activity)
+            else:
+                logger.error('** Failed to get activities : {}'.format(str(resp.status_code)))
+            ig_activities_datetime = datetime.now()
+        else:
+            logger.debug('Take activity from cache')
+
+        return ig_activities
 
 
 class ig_position:
@@ -209,4 +224,4 @@ class ig_activity:
 if (ig_rest.need_password() == False):
     ig_rest.login()
 
-ig_rest.get_activity()
+#ig_rest.get_activity()
