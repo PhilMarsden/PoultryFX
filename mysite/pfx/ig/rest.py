@@ -1,6 +1,7 @@
 import requests
 import json
 from pfx.ig.rest_private import *
+from datetime import datetime,timedelta
 # import the logging library
 import logging
 
@@ -11,6 +12,8 @@ logger.info('IG REST Initialised')
 ig_securitytoken = ""
 ig_cst = ""
 ig_account_id = ""
+ig_positions = []
+ig_positions_datetime = None
 
 class ig_rest:
     @staticmethod
@@ -75,27 +78,40 @@ class ig_rest:
 
     @staticmethod
     def get_positions(member = None):
-        global logger
+        global logger, ig_positions,ig_positions_datetime
         logger.info('Get positions')
-        ret_val = []
-        req_headers = {
-            "X-IG-API-KEY": ig_apikey,
-            "X-SECURITY-TOKEN": ig_securitytoken,
-            "CST": ig_cst,
-            "Version": 2
-        }
 
-        resp = requests.get(ig_url + 'positions', headers=req_headers)
-        if (resp.status_code == 200):
-            json_data = json.loads(resp.text)
-            logger.debug('Positions {}'.format(json.dumps(json_data, indent=4)))
-            for position in json_data["positions"]:
-                ig_pos = ig_position(position,member)
-                ret_val.append(ig_pos)
-            #print (ret_val)
+        refresh_positions = False
+        if (ig_positions_datetime == None):
+            logger.debug('First time getting positions')
+            refresh_positions = True
         else:
-            logger.error('** Failed to get positions : {}'.format(str(resp.status_code)))
-        return ret_val
+            if (datetime.now() > (ig_positions_datetime + timedelta(seconds = 10))):
+                logger.debug('Positions out of date, refresh')
+                refresh_positions = True
+        if (refresh_positions):
+            ig_positions = []
+            req_headers = {
+                "X-IG-API-KEY": ig_apikey,
+                "X-SECURITY-TOKEN": ig_securitytoken,
+                "CST": ig_cst,
+                "Version": 2
+            }
+            resp = requests.get(ig_url + 'positions', headers=req_headers)
+            if (resp.status_code == 200):
+                json_data = json.loads(resp.text)
+                #logger.debug('Positions {}'.format(json.dumps(json_data, indent=4)))
+                for position in json_data["positions"]:
+                    ig_pos = ig_position(position, member)
+                    ig_positions.append(ig_pos)
+            # print (ret_val)
+            else:
+                logger.error('** Failed to get positions : {}'.format(str(resp.status_code)))
+            ig_positions_datetime = datetime.now()
+        else:
+            logger.debug('Take positions from cache')
+
+        return ig_positions
 
 
     @staticmethod
@@ -117,7 +133,7 @@ class ig_rest:
         resp = requests.get(ig_url + 'history/activity/' + str(time_period), headers=req_headers)
         if (resp.status_code == 200):
             json_data = json.loads(resp.text)
-            logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
+            #logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
             for act_i in json_data["activities"]:
                 activity = ig_activity(act_i)
                 ret_val.append(activity)
