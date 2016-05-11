@@ -79,7 +79,16 @@
             <td>{{ act.ig_act_limit }}</td>
             <td>{{ act.ig_act_level  }}</td>
             <td>{{ act.ig_act_stop  }}</td>
-            <td>{{ act.ig_act_marketName }}</td>
+            <td>
+                {% if act.ig_act_url != "" %}
+                    <a href=" {{act.ig_act_url}} " target="_blank">
+                {% endif %}
+                {{ act.ig_act_marketName }}
+                {% if act.ig_act_url != "" %}
+                    </a>
+                {% endif %}
+            </td>
+
             <td>{{ act.ig_act_size  }}</td>
         </tr>
         {% endfor %}

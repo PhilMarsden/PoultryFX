@@ -16,6 +16,10 @@ ig_positions = []
 ig_positions_datetime = None
 ig_activities = []
 ig_activities_datetime = None
+ig_instrument_urls = {
+    'NZD/USD': 'http://www.ig.com/uk/ig-forex/nzd-usd',
+    'GBP/USD': 'http://www.ig.com/uk/ig-forex/gbp-usd',
+}
 
 class ig_rest:
     @staticmethod
@@ -136,7 +140,7 @@ class ig_rest:
                 "Version": 1
             }
 
-            num_hours = 24 * 14
+            num_hours = 24 * 90
             time_period = 1000 * 60 * 60 * num_hours
 
             logger.debug('time in milliseconds = {}'.format(time_period))
@@ -167,6 +171,7 @@ class ig_position:
     ig_pos_bid = None
     ig_pos_offer = None
     ig_pos_dealid = None
+    ig_pos_url = None
 
     @property
     def ig_pos_price(self):
@@ -174,7 +179,6 @@ class ig_position:
             return self.ig_pos_bid
         else:
             return self.ig_pos_offer
-
 
     @property
     def ig_pos_profit(self):
@@ -184,6 +188,7 @@ class ig_position:
             return round(self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_price),2)
 
     def __init__(self,json_position, member = None):
+        global ig_instrument_urls
         percentage_to_apply = 1
         if (member != None):
             percentage_to_apply = member.percentage_of_trades
@@ -197,6 +202,11 @@ class ig_position:
         self.ig_pos_bid = json_position['market']['bid']
         self.ig_pos_offer = json_position['market']['offer']
         self.ig_pos_dealid = json_position['position']['dealId']
+        if self.ig_pos_instrument in ig_instrument_urls:
+            self.ig_pos_url = ig_instrument_urls[self.ig_pos_instrument]
+        else:
+            self.ig_pos_url = ""
+        logger.debug('URL for {} = {}'.format(self.ig_pos_instrument, self.ig_pos_url))
 
 
 class ig_activity:
@@ -209,8 +219,10 @@ class ig_activity:
     ig_act_size = None
     ig_act_dealid = None
     ig_act_datetime = None
+    ig_act_url = None
 
     def __init__(self,json_position):
+        global ig_instrument_urls
         self.ig_act_activity = json_position['activity']
         self.ig_act_result = json_position['result']
         self.ig_act_limit = json_position['limit']
@@ -220,6 +232,12 @@ class ig_activity:
         self.ig_act_size = json_position['size']
         self.ig_act_dealid = json_position['dealId']
         self.ig_act_datetime = json_position['date'] + json_position['time']
+        if self.ig_act_marketName in ig_instrument_urls:
+            self.ig_act_url = ig_instrument_urls[self.ig_act_marketName]
+        else:
+            self.ig_act_url = ""
+        logger.debug('URL for {} = {}'.format(self.ig_act_marketName, self.ig_act_url))
+
 
 if (ig_rest.need_password() == False):
     ig_rest.login()

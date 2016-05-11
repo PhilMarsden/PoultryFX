@@ -69,7 +69,15 @@
        <tbody>
         {% for position in positions %}
         <tr>
-            <td>{{ position.ig_pos_instrument }}</td>
+            <td>
+                {% if position.ig_pos_url != "" %}
+                    <a href=" {{position.ig_pos_url}} " target="_blank">
+                {% endif %}
+                {{ position.ig_pos_instrument }}
+                {% if position.ig_pos_url != "" %}
+                    </a>
+                {% endif %}
+            </td>
             <td>{{ position.ig_pos_size }}</td>
             <td>{{ position.ig_pos_direction }}</td>
             <td>{{ position.ig_pos_start_level }}</td>
