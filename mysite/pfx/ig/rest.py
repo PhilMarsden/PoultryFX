@@ -19,6 +19,9 @@ ig_activities_datetime = None
 ig_instrument_urls = {
     'NZD/USD': 'http://www.ig.com/uk/ig-forex/nzd-usd',
     'GBP/USD': 'http://www.ig.com/uk/ig-forex/gbp-usd',
+    'EUR/GBP': 'http://www.ig.com/uk/ig-forex/eur-gbp',
+    'EUR/USD': 'http://www.ig.com/uk/ig-forex/eur-usd',
+    'Tesla Motors Inc (All Sessions)': 'http://www.ig.com/uk/ig-shares/tesla-motors-TSLA-US',
 }
 
 class ig_rest:
