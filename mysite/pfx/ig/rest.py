@@ -193,6 +193,21 @@ class ig_position:
         else:
             return round(self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_price),2)
 
+    @property
+    def ig_pos_max_win(self):
+        if self.ig_pos_direction == "BUY":
+            return round(self.ig_pos_size * (self.ig_pos_limit - self.ig_pos_start_level), 2)
+        else:
+            return round(self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_limit), 2)
+
+    @property
+    def ig_pos_max_loss(self):
+
+        if self.ig_pos_direction == "BUY":
+            return round(self.ig_pos_size * (self.ig_pos_stop - self.ig_pos_start_level), 2)
+        else:
+            return round(self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_stop), 2)
+
     def __init__(self,json_position, member = None):
         global ig_instrument_urls
         percentage_to_apply = 1
