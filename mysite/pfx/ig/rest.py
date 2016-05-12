@@ -12,7 +12,7 @@ logger.info('IG REST Initialised')
 ig_securitytoken = ""
 ig_cst = ""
 ig_account_id = ""
-ig_positions = []
+ig_json_positions = None
 ig_positions_datetime = None
 ig_activities = []
 ig_activities_datetime = None
@@ -87,7 +87,7 @@ class ig_rest:
 
     @staticmethod
     def get_positions(member = None):
-        global logger, ig_positions,ig_positions_datetime
+        global logger, ig_positions_datetime,ig_json_positions
         logger.info('Get positions')
 
         refresh_positions = False
@@ -98,8 +98,8 @@ class ig_rest:
             if (datetime.now() > (ig_positions_datetime + timedelta(seconds = 10))):
                 logger.debug('Positions out of date, refresh')
                 refresh_positions = True
+
         if (refresh_positions):
-            ig_positions = []
             req_headers = {
                 "X-IG-API-KEY": ig_apikey,
                 "X-SECURITY-TOKEN": ig_securitytoken,
@@ -110,16 +110,19 @@ class ig_rest:
             if (resp.status_code == 200):
                 json_data = json.loads(resp.text)
                 #logger.debug('Positions {}'.format(json.dumps(json_data, indent=4)))
-                for position in json_data["positions"]:
-                    ig_pos = ig_position(position, member)
-                    ig_positions.append(ig_pos)
+                ig_json_positions = json_data["positions"]
             # print (ret_val)
             else:
                 logger.error('** Failed to get positions : {}'.format(str(resp.status_code)))
             ig_positions_datetime = datetime.now()
         else:
             logger.debug('Take positions from cache')
-        return ig_positions
+
+        positions = []
+        for jposition in ig_json_positions:
+            pos = ig_position(jposition, member)
+            positions.append(pos)
+        return positions
 
     @staticmethod
     def get_activity():
