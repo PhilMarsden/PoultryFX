@@ -129,7 +129,7 @@ class IndividualCash(models.Model):
     size = models.FloatField()
     transaction_date = models.DateTimeField('date published')
     def __str__(self):
-        return '%s %s' % (self.member, self.transaction_date)
+        return '%s %s %d' % (self.member, self.transaction_date, self.size)
     class Meta:
         verbose_name = "Individual Cash Entry"
         verbose_name_plural = "Individual Cash Entries"
@@ -153,10 +153,11 @@ def total_profit():
     else:
         return p1
 
+tProfit = total_profit()
 logger.info('Commission = £' + str(total_commission()))
-logger.info('Profit = £' + str(total_profit()))
-logger.info('Cash = £' + str(total_profit()))
+logger.info('Profit = £' + str(tProfit))
+logger.info('Cash = £' + str(total_cash()))
 logger.info('=========')
-logger.info('Total IG Balance = £' + str(total_profit() +  total_cash()))
+logger.info('Total IG Balance = £' + str(tProfit +  total_cash()))
 logger.info('Fun fund = £' + str(total_fun_fund()))
 

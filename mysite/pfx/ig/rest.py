@@ -12,7 +12,7 @@ logger.info('IG REST Initialised')
 ig_securitytoken = ""
 ig_cst = ""
 ig_account_id = ""
-ig_json_positions = None
+ig_json_positions = []
 ig_positions_datetime = None
 ig_activities = []
 ig_activities_datetime = None
