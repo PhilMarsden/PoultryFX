@@ -58,8 +58,9 @@ def ig_view(request):
 
         template = loader.get_template('pfx/ig_view.html')
         positions = ig_rest.get_positions()
+        trades = IGPL.objects.all()
         activities = ig_rest.get_activity()
-        context = {'positions':positions, 'activities':activities}
+        context = {'positions':positions, 'activities':activities, 'trades':trades}
         return HttpResponse(template.render(context, request))
 
 

@@ -55,6 +55,41 @@
    <p>No positions.</p>
 {% endif %}
 
+   <h1 class="page-header">Trades</h1>
+{% if trades %}
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Market</th>
+          <th>Direction</th>
+          <th>Opening Price</th>
+          <th>Closing Price</th>
+          <th>Size</th>
+          <th>Net Profit</th>
+        </tr>
+       </thead>
+       <tbody>
+        {% for trade in trades %}
+        <tr>
+            <td>{{ trade.closed_date }}</td>
+            <td>{{ trade.market }}</td>
+            <td>{{ trade.direction }}</td>
+            <td>{{ trade.opening_price }}</td>
+            <td>{{ trade.closing_price }}</td>
+            <td>{{ trade.size }}</td>
+            <td>£{{ trade.net_profit }}</td>
+        </tr>
+        {% endfor %}
+       </tbody>
+     </table>
+   </div>
+{% else %}
+    <h3 class="page-header">No completed trades</h3>
+{% endif %}
+
    <h1 class="page-header">Activity</h1>
 {% if activities %}
 
