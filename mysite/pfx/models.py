@@ -101,7 +101,7 @@ class IndividualPL(models.Model):
     def save(self, *args, **kwargs):
         self.size = self.igpl.size * self.member.percentage_of_trades
         self.profit = self.igpl.net_profit * self.member.percentage_of_trades
-        self.fun_fund = - max(self.profit * self.member.current_fun_fund,0.0)
+        self.fun_fund = - round(max(self.profit * self.member.current_fun_fund,0.0),2)
         if (self.member.current_commission < 0):
             self.commission = - round(min(self.igpl.net_profit * self.member.current_commission * (1-self.member.percentage_of_trades), 0.0),2)
             logger.info('Commision {} to member {} based on Profit:{} Commission:{} percentage of trades:{}'.format(self.commission,
