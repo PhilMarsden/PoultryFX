@@ -145,7 +145,7 @@ def import_csv():
             igpl.opening_price = float(row[8])
             igpl.closing_price = float(row[9])
             igpl.trade_ccy = row[10]
-            igpl.gross_profit = float(row[19])
+            igpl.gross_profit = float(row[11])
             igpl.funding = float(row[12])
             igpl.borrowing = float(row[13])
             igpl.dividends = float(row[14])
@@ -156,7 +156,7 @@ def import_csv():
             else:
                 igpl.commccy = float(row[17])
             igpl.comm = float(row[18])
-            igpl.net_profit = float(row[11])
+            igpl.net_profit = float(row[19])
             igpl.save()
             print("Imported",row[0])
 
