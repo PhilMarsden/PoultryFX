@@ -1,7 +1,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.decorators import login_required
-from pfx.models import Member,total_fun_fund,total_cash,total_profit,total_commission
+from pfx.models import Member,total_fun_fund,total_cash,total_gross_profit,total_commission
 from pfx.ig.rest import ig_rest
 
 from .models import IGPL,IndividualPL,IndividualCash
@@ -110,9 +110,10 @@ def members(request):
    members = Member.objects.all()
    context = {'members':members,
               'total_cash_deposit': total_cash(),
-              'total_profit':total_profit(),
-              'total_deductions':total_commission() + total_fun_fund(),
-              'total_balance':total_cash() + total_commission() + total_fun_fund()}
+              'total_gross_profit':round(total_gross_profit(),2),
+              'total_deductions':round(total_commission() + total_fun_fund(),2),
+              'total_net_profit':round(total_gross_profit() + total_commission() + total_fun_fund(),2),
+              'total_balance':round(total_cash() + total_gross_profit(),2)}
    return HttpResponse(template.render(context, request))
 
 

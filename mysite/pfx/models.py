@@ -64,7 +64,11 @@ class Member(models.Model):
         return IndividualCash.objects.filter(member_id=self.id).aggregate(Sum('size')).get('size__sum', 0.00)
 
     @property
-    def profit(self):
+    def gross_profit(self):
+        return round(IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum',0.00),2)
+
+    @property
+    def net_profit(self):
         return round(IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum', 0.00) + self.deductions,2)
 
     @property
@@ -74,7 +78,7 @@ class Member(models.Model):
 
     @property
     def balance(self):
-        return self.cash_deposit + self.profit
+        return self.cash_deposit + self.net_profit
 
     def __str__(self):
         return '%s' % (self.user.email)
@@ -143,7 +147,7 @@ def total_commission():
 def total_cash():
     return round(IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum', 0.00), 2)
 
-def total_profit():
+def total_gross_profit():
     p1 = round(IndividualPL.objects.all().aggregate(Sum('profit')).get('profit__sum',0.00),2)
     p2 = round(IGPL.objects.all().aggregate(Sum('net_profit')).get('net_profit__sum', 0.00),2)
     logger.info('Profit from individual trades = ' + str(p1))
@@ -153,11 +157,11 @@ def total_profit():
     else:
         return p1
 
-tProfit = total_profit()
-logger.info('Commission = £' + str(total_commission()))
-logger.info('Profit = £' + str(tProfit))
-logger.info('Cash = £' + str(total_cash()))
-logger.info('=========')
-logger.info('Total IG Balance = £' + str(tProfit +  total_cash()))
-logger.info('Fun fund = £' + str(total_fun_fund()))
+#tProfit = total_gross_profit()
+#logger.info('Commission = £' + str(total_commission()))
+#logger.info('Profit = £' + str(tProfit))
+#logger.info('Cash = £' + str(total_cash()))
+#logger.info('=========')
+#logger.info('Total IG Balance = £' + str(tProfit +  total_cash()))
+#logger.info('Fun fund = £' + str(total_fun_fund()))
 

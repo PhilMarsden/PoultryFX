@@ -23,8 +23,9 @@
         <tr>
           <th>Name</th>
           <th>Cash Deposit</th>
-          <th>Profit</th>
+          <th>Gross Profit</th>
           <th>Deductions</th>
+          <th>Net Profit</th>
           <th>Balance</th>
         </tr>
        </thead>
@@ -33,16 +34,18 @@
         <tr>
             <td>{{ member.name }}</td>
             <td>£{{ member.cash_deposit }}</td>
-            <td>£{{ member.profit }}</td>
+            <td>£{{ member.gross_profit }}</td>
             <td>£{{ member.deductions }}</td>
+            <td>£{{ member.net_profit }}</td>
             <td>£{{ member.balance }}</td>
         </tr>
         {% endfor %}
         <tr>
             <td>TOTAL</td>
             <td>£{{ total_cash_deposit }}</td>
-            <td>£{{ total_profit }}</td>
+            <td>£{{ total_gross_profit }}</td>
             <td>£{{ total_deductions }}</td>
+            <td>£{{ total_net_profit }}</td>
             <td>£{{ total_balance }}</td>
         </tr>
        </tbody>
@@ -52,47 +55,5 @@
     <h3 class="page-header">No open positions</h3>
 {% endif %}
 
-<h1 class="page-header">Completed Trades</h1>
-
-
-{% if trades %}
-
-  <div class="table-responsive">
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Market</th>
-          <th>Direction</th>
-          <th>Opening Price</th>
-          <th>Closing Price</th>
-          <th>Size</th>
-          <th>Gross profit</th>
-          <th>Commission</th>
-          <th>Fun Fund</th>
-          <th>Net Profit</th>
-        </tr>
-       </thead>
-       <tbody>
-        {% for trade in trades %}
-        <tr>
-            <td>{{ trade.igpl.closed_date }}</td>
-            <td>{{ trade.igpl.market }}</td>
-            <td>{{ trade.igpl.direction }}</td>
-            <td>{{ trade.igpl.opening_price }}</td>
-            <td>{{ trade.igpl.closing_price }}</td>
-            <td>{{ trade.size }}</td>
-            <td>£{{ trade.profit }}</td>
-            <td>£{{ trade.commission }}</td>
-            <td>£{{ trade.fun_fund }}</td>
-            <td>£{{ trade.net_profit }}</td>
-        </tr>
-        {% endfor %}
-       </tbody>
-     </table>
-   </div>
-{% else %}
-    <h3 class="page-header">No completed trades</h3>
-{% endif %}
 {% endblock %}
 
