@@ -50,7 +50,7 @@ def bootstrap_data():
     u5 = User.objects.get(email='seancurran78@googlemail.com')
     u6 = User.objects.get(email='crowecameron@hotmail.com')
 
-    m1 = Member(user = u1,current_trade_size = 10,current_commission = -0.05, current_fun_fund = 0.01)
+    m1 = Member(user = u1,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
     m1.save()
     m2 = Member(user = u2,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.01)
     m2.save()

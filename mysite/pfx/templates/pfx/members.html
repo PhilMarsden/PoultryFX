@@ -41,25 +41,44 @@
         </tr>
         {% endfor %}
         <tr>
-            <td>Fun Fund</td>
-            <td>£0</td>
-            <td>£0</td>
-            <td>£{{ total_fun_fund |floatformat:2|intcomma}}</td>
-            <td>£{{ total_fun_fund |floatformat:2|intcomma}}</td>
-            <td>£{{ total_fun_fund |floatformat:2|intcomma}}</td>
-        </tr>
-        <tr>
             <td>TOTAL</td>
             <td>£{{ total_cash_deposit |floatformat:2|intcomma}}</td>
             <td>£{{ total_gross_profit |floatformat:2|intcomma}}</td>
-            <td>£0.00</td>
-            <td>£{{ total_gross_profit |floatformat:2|intcomma}}</td>
+            <td>£{{ total_deductions |floatformat:2|intcomma}}</td>
+            <td>£{{ total_net_profit |floatformat:2|intcomma}}</td>
             <td>£{{ total_balance |floatformat:2|intcomma}}</td>
         </tr>
        </tbody>
      </table>
    </div>
+
+  <div class="table-responsive">
+    <table class="table table-bordered">
+       <tbody>
+       <tr>
+          <th>Fun Fund</th>
+          <td>£{{ total_fun_fund |floatformat:2|intcomma}} </td>
+       </tr>
+       <tr>
+          <th>Commission</th>
+          <td>£{{ total_commission |floatformat:2|intcomma}} </td>
+        </tr>
+        <tr>
+          <th>Members Balance</th>
+          <td>£{{ total_balance|floatformat:2|intcomma}} </td>
+        </tr>
+        <tr>
+          <th>Total IG Balance</th>
+          <th>£{{ total_ig_balance|floatformat:2|intcomma}} </th>
+        </tr>
+       </tbody>
+     </table>
+   </div>
+
+
+
 {% else %}
+
     <h3 class="page-header">No open positions</h3>
 {% endif %}
 
