@@ -27,19 +27,19 @@
         <tr>
 
             <td><b>Cash Deposit Total</b></td>
-            <td>£{{member.cash_deposit | floatformat:2}}</td>
+            <td>£{{member.cash_deposit |floatformat:2|intcomma}}</td>
         </tr>
         <tr>
             <td><b>Net Profit</b></td>
-            <td>£{{member.net_profit | floatformat:2}}</td>
+            <td>£{{member.net_profit | floatformat:2|intcomma}}</td>
         </tr>
         <tr>
             <td><b>Balance</b></td>
-            <td>£{{member.balance | floatformat:2}}</td>
+            <td>£{{member.balance | floatformat:2|intcomma}}</td>
         </tr>
         <tr>
             <td><b>Total fun fund</b></td>
-            <td>£{{fun_fund | floatformat:2}}</td>
+            <td>£{{fun_fund | floatformat:2|intcomma}}</td>
         </tr>
        </tbody>
      </table>
@@ -85,10 +85,10 @@
             <td>{{ position.ig_pos_start_level }}</td>
             <td>{{ position.ig_pos_limit }}</td>
             <td>{{ position.ig_pos_stop }}</td>
-            <td>{{ position.ig_pos_max_win }}</td>
-            <td>{{ position.ig_pos_max_loss }}</td>
+            <td>{{ position.ig_pos_max_win |floatformat:2|intcomma }}</td>
+            <td>{{ position.ig_pos_max_loss |floatformat:2|intcomma}}</td>
             <td>{{ position.ig_pos_price }}</td>
-            <td>£{{ position.ig_pos_profit }}</td>
+            <td>£{{ position.ig_pos_profit |floatformat:2|intcomma}}</td>
         </tr>
         {% endfor %}
        </tbody>
@@ -128,10 +128,10 @@
             <td>{{ trade.igpl.opening_price }}</td>
             <td>{{ trade.igpl.closing_price }}</td>
             <td>{{ trade.size }}</td>
-            <td>£{{ trade.profit }}</td>
-            <td>£{{ trade.commission }}</td>
-            <td>£{{ trade.fun_fund }}</td>
-            <td>£{{ trade.net_profit }}</td>
+            <td>£{{ trade.profit |floatformat:2|intcomma}}</td>
+            <td>£{{ trade.commission |floatformat:2|intcomma}}</td>
+            <td>£{{ trade.fun_fund |floatformat:2|intcomma}}</td>
+            <td>£{{ trade.net_profit |floatformat:2|intcomma}}</td>
         </tr>
         {% endfor %}
        </tbody>

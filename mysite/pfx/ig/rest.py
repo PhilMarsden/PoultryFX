@@ -189,24 +189,24 @@ class ig_position:
     @property
     def ig_pos_profit(self):
         if self.ig_pos_direction == "BUY":
-            return round(self.ig_pos_size * (self.ig_pos_price - self.ig_pos_start_level),2)
+            return self.ig_pos_size * (self.ig_pos_price - self.ig_pos_start_level)
         else:
-            return round(self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_price),2)
+            return self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_price)
 
     @property
     def ig_pos_max_win(self):
         if self.ig_pos_direction == "BUY":
-            return round(self.ig_pos_size * (self.ig_pos_limit - self.ig_pos_start_level), 2)
+            return self.ig_pos_size * (self.ig_pos_limit - self.ig_pos_start_level)
         else:
-            return round(self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_limit), 2)
+            return self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_limit)
 
     @property
     def ig_pos_max_loss(self):
 
         if self.ig_pos_direction == "BUY":
-            return round(self.ig_pos_size * (self.ig_pos_stop - self.ig_pos_start_level), 2)
+            return self.ig_pos_size * (self.ig_pos_stop - self.ig_pos_start_level)
         else:
-            return round(self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_stop), 2)
+            return self.ig_pos_size * (self.ig_pos_start_level - self.ig_pos_stop)
 
     def __init__(self,json_position, member = None):
         global ig_instrument_urls

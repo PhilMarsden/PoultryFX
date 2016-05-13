@@ -65,16 +65,16 @@ class Member(models.Model):
 
     @property
     def gross_profit(self):
-        return round(IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum',0.00),2)
+        return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum',0.00)
 
     @property
     def net_profit(self):
-        return round(IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum', 0.00) + self.deductions,2)
+        return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum', 0.00) + self.deductions
 
     @property
     def deductions(self):
-         return round(IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('commission')).get('commission__sum', 0.00) + \
-                IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('fun_fund')).get('fun_fund__sum', 0.00),2)
+         return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('commission')).get('commission__sum', 0.00) + \
+                IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('fun_fund')).get('fun_fund__sum', 0.00)
 
     @property
     def balance(self):
@@ -93,11 +93,11 @@ class IndividualPL(models.Model):
 
     @property
     def deductions(self):
-        return  round(self.commission + self.fun_fund,2)
+        return  self.commission + self.fun_fund
 
     @property
     def net_profit(self):
-        return round(self.profit + self.deductions,2)
+        return self.profit + self.deductions
 
     #def default_profit(self):
     #    return 1.0
@@ -105,9 +105,9 @@ class IndividualPL(models.Model):
     def save(self, *args, **kwargs):
         self.size = self.igpl.size * self.member.percentage_of_trades
         self.profit = self.igpl.net_profit * self.member.percentage_of_trades
-        self.fun_fund = - round(max(self.profit * self.member.current_fun_fund,0.0),2)
+        self.fun_fund = - max(self.profit * self.member.current_fun_fund,0.0)
         if (self.member.current_commission < 0):
-            self.commission = - round(min(self.igpl.net_profit * self.member.current_commission * (1-self.member.percentage_of_trades), 0.0),2)
+            self.commission = - min(self.igpl.net_profit * self.member.current_commission * (1-self.member.percentage_of_trades), 0.0)
             logger.info('Commision {} to member {} based on Profit:{} Commission:{} percentage of trades:{}'.format(self.commission,
                                                                                                                     self.member,
                                                                                                                     self.igpl.net_profit,
@@ -139,17 +139,17 @@ class IndividualCash(models.Model):
         verbose_name_plural = "Individual Cash Entries"
 
 def total_fun_fund():
-    return round(IndividualPL.objects.all().aggregate(Sum('fun_fund')).get('fun_fund__sum',0.00),2)
+    return IndividualPL.objects.all().aggregate(Sum('fun_fund')).get('fun_fund__sum',0.00)
 
 def total_commission():
-    return round(IndividualPL.objects.all().aggregate(Sum('commission')).get('commission__sum',0.00),2)
+    return IndividualPL.objects.all().aggregate(Sum('commission')).get('commission__sum',0.00)
 
 def total_cash():
-    return round(IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum', 0.00), 2)
+    return IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum', 0.00)
 
 def total_gross_profit():
-    p1 = round(IndividualPL.objects.all().aggregate(Sum('profit')).get('profit__sum',0.00),2)
-    p2 = round(IGPL.objects.all().aggregate(Sum('net_profit')).get('net_profit__sum', 0.00),2)
+    p1 = IndividualPL.objects.all().aggregate(Sum('profit')).get('profit__sum',0.00)
+    p2 = IGPL.objects.all().aggregate(Sum('net_profit')).get('net_profit__sum', 0.00)
     logger.info('Profit from individual trades = ' + str(p1))
     logger.info('Profit from trades = ' + str(p2))
     if (p1 != p2):

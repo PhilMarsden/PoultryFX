@@ -33,20 +33,28 @@
         {% for member in members %}
         <tr>
             <td>{{ member.name }}</td>
-            <td>£{{ member.cash_deposit }}</td>
-            <td>£{{ member.gross_profit }}</td>
-            <td>£{{ member.deductions }}</td>
-            <td>£{{ member.net_profit }}</td>
-            <td>£{{ member.balance }}</td>
+            <td>£{{ member.cash_deposit |floatformat:2|intcomma}}</td>
+            <td>£{{ member.gross_profit |floatformat:2|intcomma}}</td>
+            <td>£{{ member.deductions |floatformat:2|intcomma}}</td>
+            <td>£{{ member.net_profit |floatformat:2|intcomma}}</td>
+            <td>£{{ member.balance |floatformat:2|intcomma}}</td>
         </tr>
         {% endfor %}
         <tr>
+            <td>Fun Fund</td>
+            <td>£0</td>
+            <td>£0</td>
+            <td>£{{ total_fun_fund |floatformat:2|intcomma}}</td>
+            <td>£{{ total_fun_fund |floatformat:2|intcomma}}</td>
+            <td>£{{ total_fun_fund |floatformat:2|intcomma}}</td>
+        </tr>
+        <tr>
             <td>TOTAL</td>
-            <td>£{{ total_cash_deposit }}</td>
-            <td>£{{ total_gross_profit }}</td>
-            <td>£{{ total_deductions }}</td>
-            <td>£{{ total_net_profit }}</td>
-            <td>£{{ total_balance }}</td>
+            <td>£{{ total_cash_deposit |floatformat:2|intcomma}}</td>
+            <td>£{{ total_gross_profit |floatformat:2|intcomma}}</td>
+            <td>£0.00</td>
+            <td>£{{ total_gross_profit |floatformat:2|intcomma}}</td>
+            <td>£{{ total_balance |floatformat:2|intcomma}}</td>
         </tr>
        </tbody>
      </table>

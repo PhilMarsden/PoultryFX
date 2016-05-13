@@ -43,10 +43,10 @@
             <td>{{ position.ig_pos_start_level }}</td>
             <td>{{ position.ig_pos_limit }}</td>
             <td>{{ position.ig_pos_stop }}</td>
-            <td>{{ position.ig_pos_max_win }}</td>
-            <td>{{ position.ig_pos_max_loss }}</td>
+            <td>£{{ position.ig_pos_max_win |floatformat:2|intcomma}}</td>
+            <td>£{{ position.ig_pos_max_loss |floatformat:2|intcomma}}</td>
             <td>{{ position.ig_pos_price }}</td>
-            <td>{{ position.ig_pos_profit }}</td>
+            <td>£{{ position.ig_pos_profit |floatformat:2|intcomma}}</td>
         </tr>
         {% endfor %}
        </tbody>
@@ -83,7 +83,7 @@
             <td>{{ trade.opening_price }}</td>
             <td>{{ trade.closing_price }}</td>
             <td>{{ trade.size }}</td>
-            <td>£{{ trade.net_profit }}</td>
+            <td>£{{ trade.net_profit |floatformat:2|intcomma}}</td>
         </tr>
         {% endfor %}
        </tbody>

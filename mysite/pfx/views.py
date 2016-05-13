@@ -110,10 +110,11 @@ def members(request):
    members = Member.objects.all()
    context = {'members':members,
               'total_cash_deposit': total_cash(),
-              'total_gross_profit':round(total_gross_profit(),2),
-              'total_deductions':round(total_commission() + total_fun_fund(),2),
-              'total_net_profit':round(total_gross_profit() + total_commission() + total_fun_fund(),2),
-              'total_balance':round(total_cash() + total_gross_profit(),2)}
+              'total_gross_profit':total_gross_profit(),
+              'total_fun_fund':-total_fun_fund(),
+              'total_deductions':total_commission() + total_fun_fund(),
+              'total_net_profit':total_gross_profit() + total_commission() + total_fun_fund(),
+              'total_balance':total_cash() + total_gross_profit()}
    return HttpResponse(template.render(context, request))
 
 
