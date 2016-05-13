@@ -12,6 +12,7 @@
 {% endblock %}
 
 {% block body %}
+{% if show_positions %}
    <h1 class="page-header">Open positions</h1>
 {% if positions %}
 
@@ -54,7 +55,9 @@
 {% else %}
    <p>No positions.</p>
 {% endif %}
+{% endif %}
 
+{% if show_trades %}
    <h1 class="page-header">Trades</h1>
 {% if trades %}
 
@@ -89,7 +92,9 @@
 {% else %}
     <h3 class="page-header">No completed trades</h3>
 {% endif %}
+{% endif %}
 
+{% if show_activities %}
    <h1 class="page-header">Activity</h1>
 {% if activities %}
 
@@ -136,6 +141,7 @@
    </div>
 {% else %}
    <p>No activity.</p>
+{% endif %}
 {% endif %}
 
 {% endblock %}

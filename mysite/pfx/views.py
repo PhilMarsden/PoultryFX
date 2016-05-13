@@ -1,10 +1,18 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.decorators import login_required
-from pfx.models import Member,total_fun_fund
+from pfx.models import Member,total_fun_fund,total_cash,total_profit,total_commission
 from pfx.ig.rest import ig_rest
 
 from .models import IGPL,IndividualPL,IndividualCash
+
+# import the logging library
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+logger.info('Views Initialised')
+
 
 @login_required
 def profile(request):
@@ -22,46 +30,89 @@ def profile(request):
     return HttpResponse(template.render(context, request))
 
 
-@login_required
-def ig_view(request):
+def ig_base(request,redirect_url):
+    logger.debug('Check IG Login')
     if ig_rest.need_password():
+        logger.debug('Password needed')
         if request.method == 'POST':
-            #print("Password form posted")
-            #print (request.POST['password'])
-            # create a form instance and populate it with data from the request:
+            logger.debug('Password posted, try IG Login')
             ig_rest.set_password(request.POST['password'])
             ig_rest.login()
             if ig_rest.need_password():
-                #print("Password form posted - failed to login")
+                logger.warn('Password form posted - failed IG Login')
                 template = loader.get_template('pfx/ig_get_password.html')
                 context = {'identifier': ig_rest.get_identifier(),
-                         }
+                           }
                 return HttpResponse(template.render(context, request))
             else:
-                #print("Password form posted - Logged in to IG")
-                return HttpResponseRedirect('/pfx/ig_view/')
+                logger.info('Password form posted - IG Login succeeded')
+
+                return HttpResponseRedirect(redirect_url)
         else:
             template = loader.get_template('pfx/ig_get_password.html')
             context = {'identifier': ig_rest.get_identifier(),
                        }
             return HttpResponse(template.render(context, request))
-
     else:
+        logger.debug('Password set')
         if ig_rest.need_login():
+            logger.debug('Login needed')
             ig_rest.login()
             if ig_rest.need_password():
-                #print("Password form posted - failed to login")
+                logger.warn('IG Login failed')
+                # print("Password form posted - failed to login")
                 template = loader.get_template('pfx/ig_get_password.html')
                 context = {'identifier': ig_rest.get_identifier(),
-                         }
+                           }
                 return HttpResponse(template.render(context, request))
 
-        template = loader.get_template('pfx/ig_view.html')
-        positions = ig_rest.get_positions()
-        trades = IGPL.objects.all()
-        activities = ig_rest.get_activity()
-        context = {'positions':positions, 'activities':activities, 'trades':trades}
-        return HttpResponse(template.render(context, request))
+    return None
 
+
+@login_required
+def ig_trades(request):
+   retval = ig_base(request,'/pfx/ig_trades/')
+   if (retval != None):
+       return retval
+
+   template = loader.get_template('pfx/ig_view.html')
+   trades = IGPL.objects.all()
+   context = {'trades':trades, 'show_trades':True}
+   return HttpResponse(template.render(context, request))
+
+
+@login_required
+def ig_positions(request):
+   retval = ig_base(request,'/pfx/ig_positions/')
+   if (retval != None):
+       return retval
+
+   template = loader.get_template('pfx/ig_view.html')
+   positions = ig_rest.get_positions()
+   context = {'positions':positions, 'show_positions':True}
+   return HttpResponse(template.render(context, request))
+
+@login_required
+def ig_activities(request):
+   retval = ig_base(request,'/pfx/ig_activities/')
+   if (retval != None):
+       return retval
+
+   template = loader.get_template('pfx/ig_view.html')
+   activities = ig_rest.get_activity()
+   context = {'activities':activities, 'show_activities':True}
+   return HttpResponse(template.render(context, request))
+
+
+@login_required
+def members(request):
+   template = loader.get_template('pfx/members.html')
+   members = Member.objects.all()
+   context = {'members':members,
+              'total_cash_deposit': total_cash(),
+              'total_profit':total_profit(),
+              'total_deductions':total_commission() + total_fun_fund(),
+              'total_balance':total_cash() + total_commission() + total_fun_fund()}
+   return HttpResponse(template.render(context, request))
 
 

@@ -50,8 +50,16 @@
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             {% if request.user.is_superuser %}
-              <li><a href="/ig_view">IG Data</a></li>
-              <li><a href="/admin">Admin</a></li>
+                       <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li><a href="/ig_positions">IG Positions</a></li>
+                <li><a href="/ig_activities">IG Activities</a></li>
+                <li><a href="/ig_trades">Trades</a></li>
+                <li><a href="/members">Members</a></li>
+                <li><a href="/admin">Django</a></li>
+              </ul>
+            </li>
             {% endif %}
             <li><a href="/">Dashboard</a></li>
             {% if user.is_authenticated %}

@@ -65,12 +65,12 @@ class Member(models.Model):
 
     @property
     def profit(self):
-        return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum', 0.00) + self.deductions
+        return round(IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum', 0.00) + self.deductions,2)
 
     @property
     def deductions(self):
-         return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('commission')).get('commission__sum', 0.00) + \
-                IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('fun_fund')).get('fun_fund__sum', 0.00)
+         return round(IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('commission')).get('commission__sum', 0.00) + \
+                IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('fun_fund')).get('fun_fund__sum', 0.00),2)
 
     @property
     def balance(self):
@@ -141,7 +141,7 @@ def total_commission():
     return round(IndividualPL.objects.all().aggregate(Sum('commission')).get('commission__sum',0.00),2)
 
 def total_cash():
-    return round(IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum',0.00),2)
+    return round(IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum', 0.00), 2)
 
 def total_profit():
     p1 = round(IndividualPL.objects.all().aggregate(Sum('profit')).get('profit__sum',0.00),2)
