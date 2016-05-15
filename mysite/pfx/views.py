@@ -77,7 +77,7 @@ def ig_trades(request):
 
    template = loader.get_template('pfx/ig_view.html')
    trades = IGPL.objects.all()
-   context = {'trades':trades, 'show_trades':True}
+   context = {'trades':trades, 'show_trades':True, 'show_positions':False, 'show_activities':False}
    return HttpResponse(template.render(context, request))
 
 
@@ -89,7 +89,7 @@ def ig_positions(request):
 
    template = loader.get_template('pfx/ig_view.html')
    positions = ig_rest.get_positions()
-   context = {'positions':positions, 'show_positions':True}
+   context = {'positions':positions, 'show_positions':True, 'show_trades':False, 'show_activities':False }
    return HttpResponse(template.render(context, request))
 
 @login_required
@@ -100,7 +100,7 @@ def ig_activities(request):
 
    template = loader.get_template('pfx/ig_view.html')
    activities = ig_rest.get_activity()
-   context = {'activities':activities, 'show_activities':True}
+   context = {'activities':activities, 'show_activities':True, 'show_positions':False, 'show_trades':False }
    return HttpResponse(template.render(context, request))
 
 
