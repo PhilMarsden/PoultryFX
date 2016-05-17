@@ -16,6 +16,9 @@
 
 {% if member %}
 
+{% if user.is_superuser %}
+<a href="/members"> All Members</a>
+{% endif %}
   <div class="table-responsive">
     <table class="table table-bordered">
        <tbody>
@@ -40,6 +43,10 @@
         <tr>
             <td><b>Total fun fund</b></td>
             <td>£{{fun_fund | floatformat:2|intcomma}}</td>
+        </tr>
+        <tr>
+            <td><b>Trade size</b></td>
+            <td>£{{member.current_trade_size | floatformat:2|intcomma}} per point</td>
         </tr>
        </tbody>
      </table>

@@ -1,6 +1,6 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.template import loader
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,permission_required
 from pfx.models import Member,total_fun_fund,total_cash,total_gross_profit,total_commission,total_current_trade_size
 from pfx.ig.rest import ig_rest
 
@@ -104,20 +104,34 @@ def ig_activities(request):
    return HttpResponse(template.render(context, request))
 
 
-@login_required
+@permission_required('is_superuser')
 def members(request):
-   template = loader.get_template('pfx/members.html')
-   members = Member.objects.all()
-   context = {'members':members,
-              'total_current_trade_size': total_current_trade_size(),
-              'total_cash_deposit': total_cash(),
-              'total_gross_profit':total_gross_profit(),
-              'total_fun_fund':-total_fun_fund(),
-              'total_deductions':total_commission() + total_fun_fund(),
-              'total_commission':-total_commission(),
-              'total_net_profit':total_gross_profit() + total_commission() + total_fun_fund(),
-              'total_balance':total_cash() + total_gross_profit() + total_commission() + total_fun_fund(),
-              'total_ig_balance':total_cash() + total_gross_profit()}
+   if 'id' in request.GET:
+       m = Member.objects.get(id = request.GET['id'])
+       trades = IndividualPL.objects.filter(member=m).order_by('-igpl__closed_date')
+       positions = ig_rest.get_positions(member=m)
+       fun_fund = -total_fun_fund()
+       template = loader.get_template('pfx/profile.html')
+       context = {
+          'trades': trades,
+          'member': m,
+          'positions': positions,
+          'fun_fund': fun_fund
+       }
+   else:
+       template = loader.get_template('pfx/members.html')
+       members = Member.objects.all()
+       context = {'members':members,
+                  'total_current_trade_size': total_current_trade_size(),
+                  'total_cash_deposit': total_cash(),
+                  'total_gross_profit':total_gross_profit(),
+                  'total_fun_fund':-total_fun_fund(),
+                  'total_deductions':total_commission() + total_fun_fund(),
+                  'total_commission':-total_commission(),
+                  'total_net_profit':total_gross_profit() + total_commission() + total_fun_fund(),
+                  'total_balance':total_cash() + total_gross_profit() + total_commission() + total_fun_fund(),
+                  'total_ig_balance':total_cash() + total_gross_profit()}
+
    return HttpResponse(template.render(context, request))
 
 

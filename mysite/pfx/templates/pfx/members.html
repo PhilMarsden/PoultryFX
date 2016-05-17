@@ -13,9 +13,14 @@
 
 {% block body %}
 
-<h1 class="page-header">Members</h1>
+
+{% if member %}
+<h1 class="page-header">Member</h1>
+{% endif %}
 
 {% if members %}
+
+<h1 class="page-header">Members</h1>
 
   <div class="table-responsive">
     <table class="table table-striped">
@@ -33,7 +38,7 @@
        <tbody>
         {% for member in members %}
         <tr>
-            <td>{{ member.name }}</td>
+            <td><a href="/members?id={{member.id}}">{{ member.name }}</a></td>
             <td>{{ member.current_trade_size |floatformat:2|intcomma}}</td>
             <td>£{{ member.cash_deposit |floatformat:2|intcomma}}</td>
             <td>£{{ member.gross_profit |floatformat:2|intcomma}}</td>
