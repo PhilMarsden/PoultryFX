@@ -128,7 +128,7 @@ class ig_rest:
         return positions
 
     @staticmethod
-    def get_activity():
+    def get_activity(include_all):
         global logger, ig_activities,ig_activities_datetime
         logger.info('Get activity')
 
@@ -163,8 +163,9 @@ class ig_rest:
                 json_data = json.loads(resp.text)
                 #logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
                 for act_i in json_data["activities"]:
-                    activity = ig_activity(act_i)
-                    ig_activities.append(activity)
+                    if (act_i["activity"] == "Order") or include_all:
+                        activity = ig_activity(act_i)
+                        ig_activities.append(activity)
             else:
                 logger.error('** Failed to get activities : {}'.format(str(resp.status_code)))
             ig_activities_datetime = datetime.now()

@@ -99,7 +99,7 @@ def ig_activities(request):
        return retval
 
    template = loader.get_template('pfx/ig_view.html')
-   activities = ig_rest.get_activity()
+   activities = ig_rest.get_activity(include_all=False)
    context = {'activities':activities, 'show_activities':True, 'show_positions':False, 'show_trades':False }
    return HttpResponse(template.render(context, request))
 
