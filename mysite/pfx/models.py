@@ -139,6 +139,9 @@ def total_commission():
 def total_cash():
     return IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum', 0.00)
 
+def total_current_trade_size():
+    return Member.objects.all().aggregate(Sum('current_trade_size')).get('current_trade_size__sum', 0.00)
+
 def total_gross_profit():
     p1 = IndividualPL.objects.all().aggregate(Sum('profit')).get('profit__sum',0.00)
     p2 = IGPL.objects.all().aggregate(Sum('net_profit')).get('net_profit__sum', 0.00)

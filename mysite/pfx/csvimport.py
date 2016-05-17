@@ -5,17 +5,17 @@ my_hostname = gethostname()
 if (my_hostname == 'pm-django.zoo.lan'):
     DEBUG = False
     ALLOWED_HOSTS = ['poultryfx.com']
-    csv_filepathname = '/home/softwire/PoultryFX/mysite/imports/trades.csv'
+    csv_filepathname = '/home/softwire/PoultryFX/mysite/imports/trades'
     path = '/home/softwire/PoultryFX/mysite'  # use your own username here
 elif (my_hostname == 'PHILLAPTOP'):
     DEBUG = True
     ALLOWED_HOSTS = []
-    csv_filepathname='E:\\Work\\\PoultryFX\\\mysite\\\imports\\trades.csv'
+    csv_filepathname='E:\\Work\\\PoultryFX\\\mysite\\\imports\\trades'
     path = 'E:\\Work\\PoultryFX\\mysite'  # use your own username here
 else:
     DEBUG = True
     ALLOWED_HOSTS = []
-    csv_filepathname='C:\\Work\\\PoultryFX\\\mysite\\\imports\\trades.csv'
+    csv_filepathname='C:\\Work\\\PoultryFX\\\mysite\\\imports\\trades'
     path = 'C:\\Work\\PoultryFX\\mysite'  # use your own username here
 
 if path not in sys.path:
@@ -31,6 +31,7 @@ from pfx.models import Member, IGPL, IndividualPL, IndividualCash
 
 def bootstrap_data():
     from pfx.models import Member,IGPL,IndividualPL,IndividualCash
+    models.IGPL.objects.all().delete()
     models.IndividualPL.objects.all().delete()
     models.IndividualCash.objects.all().delete()
     models.Member.objects.all().delete()
@@ -40,9 +41,11 @@ def bootstrap_data():
     #u3 = User.objects.create_user('nigel.ratcliffe@ensoft.co.uk','nigel.ratcliffe@ensoft.co.uk','jellyfish')
     #u4 = User.objects.create_user('seancurran78@googlemail.com','seancurran78@googlemail.com','jellyfish')
     #u5 = User.objects.create_user('crowecameron@hotmail.com','crowecameron@hotmail.com','jellyfish')
+    #u1.save()
+    #u2.save()
     #u3.save()
     #u4.save()
-    #u5.save
+    #u5.save()
     u1 = User.objects.get(email='phil.marsden@softwire.com')
     u2 = User.objects.get(email = 'john.cooper@ensoft.co.uk')
     u3 = User.objects.get(email = 'dan.shavick@softwire.com')
@@ -86,6 +89,8 @@ def bootstrap_data():
     ic6.save()
 
 
+
+
 def mycsv_reader(csv_reader):
   while True:
     try:
@@ -94,11 +99,9 @@ def mycsv_reader(csv_reader):
       pass
     continue
 
-def import_csv():
-    reader = mycsv_reader(csv.reader(open(csv_filepathname, encoding='utf-16', mode='rU'), dialect='excel-tab'))
+def import_csv(csv_filename):
+    reader = mycsv_reader(csv.reader(open(csv_filename, encoding='utf-16', mode='rU'), dialect='excel-tab'))
     start_import = False
-
-    models.IGPL.objects.all().delete()
 
     for row in reader:
         if start_import:
@@ -137,4 +140,9 @@ def import_csv():
             start_import = False
 
 bootstrap_data()
-import_csv()
+import_csv(csv_filepathname + '1.csv')
+u1 = User.objects.get(email='dan.shavick@softwire.com')
+m1 = Member.objects.get(user=u1)
+m1.current_trade_size = 20
+m1.save()
+#import_csv(csv_filepathname + '2.csv')

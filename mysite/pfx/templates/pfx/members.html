@@ -22,7 +22,7 @@
       <thead>
         <tr>
           <th>Name</th>
-          <th>Cash Deposit</th>
+          <th>Trade Size</th>
           <th>Gross Profit</th>
           <th>Deductions</th>
           <th>Net Profit</th>
@@ -33,6 +33,7 @@
         {% for member in members %}
         <tr>
             <td>{{ member.name }}</td>
+            <td>{{ member.current_trade_size |floatformat:2|intcomma}}</td>
             <td>£{{ member.cash_deposit |floatformat:2|intcomma}}</td>
             <td>£{{ member.gross_profit |floatformat:2|intcomma}}</td>
             <td>£{{ member.deductions |floatformat:2|intcomma}}</td>
@@ -42,6 +43,7 @@
         {% endfor %}
         <tr>
             <td>TOTAL</td>
+            <td>{{ total_current_trade_size |floatformat:2|intcomma}}</td>
             <td>£{{ total_cash_deposit |floatformat:2|intcomma}}</td>
             <td>£{{ total_gross_profit |floatformat:2|intcomma}}</td>
             <td>£{{ total_deductions |floatformat:2|intcomma}}</td>

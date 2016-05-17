@@ -1,7 +1,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.decorators import login_required
-from pfx.models import Member,total_fun_fund,total_cash,total_gross_profit,total_commission
+from pfx.models import Member,total_fun_fund,total_cash,total_gross_profit,total_commission,total_current_trade_size
 from pfx.ig.rest import ig_rest
 
 from .models import IGPL,IndividualPL,IndividualCash
@@ -17,7 +17,7 @@ logger.info('Views Initialised')
 @login_required
 def profile(request):
     m = Member.objects.get(user = request.user)
-    trades = IndividualPL.objects.filter(member = m)
+    trades = IndividualPL.objects.filter(member = m).order_by('-igpl__closed_date')
     positions = ig_rest.get_positions(member = m)
     fun_fund = -total_fun_fund()
     template = loader.get_template('pfx/profile.html')
@@ -109,6 +109,7 @@ def members(request):
    template = loader.get_template('pfx/members.html')
    members = Member.objects.all()
    context = {'members':members,
+              'total_current_trade_size': total_current_trade_size(),
               'total_cash_deposit': total_cash(),
               'total_gross_profit':total_gross_profit(),
               'total_fun_fund':-total_fun_fund(),
