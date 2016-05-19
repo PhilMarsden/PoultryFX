@@ -119,6 +119,10 @@ def members(request):
           'fun_fund': fun_fund
        }
    else:
+       if 'updatetradesizes' in request.GET:
+           logger.info("Updating trade sizes")
+           Member.set_all_trade_sizes()
+
        template = loader.get_template('pfx/members.html')
        members = Member.objects.all()
        context = {'members':members,
