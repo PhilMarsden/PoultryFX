@@ -76,7 +76,7 @@ class ig_rest:
                 logger.debug(body)
                 logger.debug(headers)
                 logger.debug(resp.url)
-                logger.debug(resp.content)
+                logger.warning(resp.content)
                 ig_password = None
                 ig_cst = None
 
