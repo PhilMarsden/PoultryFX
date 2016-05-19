@@ -158,4 +158,10 @@ m1.automatic_trade_size = True
 m1.save()
 m1.set_calculated_trade_size()
 
+member_list = Member.objects.all()
+for m1 in member_list:
+    m1.automatic_trade_size = True
+    m1.save
+    m1.set_calculated_trade_size()
+
 #import_csv(csv_filepathname + '2.csv')
