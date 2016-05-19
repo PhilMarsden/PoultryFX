@@ -52,6 +52,7 @@ class ig_rest:
     def login():
         global ig_password,logger
         if (ig_password != None) and (ig_cst == None):
+            logger.info("Attempting Login")
             body = {
                 "identifier": ig_identifier,
                 "password": ig_password
@@ -63,6 +64,7 @@ class ig_rest:
             resp = requests.post(ig_url + 'session', json=body, headers=headers)
 
             if (resp.status_code == 200):
+                logger.info("Login succeeded")
                 global ig_cst,ig_securitytoken,ig_account_id
                 ig_cst = resp.headers["CST"]
                 ig_securitytoken = resp.headers["X-SECURITY-TOKEN"]
@@ -70,7 +72,7 @@ class ig_rest:
                 json_data = json.loads(resp.text)
                 ig_account_id = json_data["accounts"][0]["accountId"]
             else:
-                logger.debug("Login failed - Restting password to NONE, response code " + str(resp.status_code))
+                logger.warning("Login failed - Restting password to NONE, response code " + str(resp.status_code))
                 logger.debug(body)
                 logger.debug(headers)
                 logger.debug(resp.url)
@@ -85,11 +87,11 @@ class ig_rest:
 
         refresh_positions = False
         if (ig_positions_datetime == None):
-            logger.debug('First time getting positions')
+            logger.info('First time getting positions')
             refresh_positions = True
         else:
             if (datetime.now() > (ig_positions_datetime + timedelta(seconds = 10))):
-                logger.debug('Positions out of date, refresh')
+                logger.info('Positions out of date, refresh')
                 refresh_positions = True
 
         if (refresh_positions and ig_cst != None):
@@ -101,11 +103,11 @@ class ig_rest:
             }
             resp = requests.get(ig_url + 'positions', headers=req_headers)
             if (resp.status_code == 401):
-                logger.debug("401 return code, try logging in again")
+                logger.warning("401 return code, try logging in again")
                 ig_cst = None
                 ig_rest.login()
             elif (resp.status_code == 200):
-                logger.debug("200 return code, all good")
+                logger.info("200 return code, all good")
                 json_data = json.loads(resp.text)
                 #logger.debug('Positions {}'.format(json.dumps(json_data, indent=4)))
                 ig_json_positions = json_data["positions"]
@@ -113,7 +115,7 @@ class ig_rest:
             else:
                 logger.error('** Failed to get positions : {}'.format(str(resp.status_code)))
         else:
-            logger.debug('Take positions from cache')
+            logger.info('Take positions from cache')
 
         positions = []
         for jposition in ig_json_positions:
@@ -128,11 +130,11 @@ class ig_rest:
 
         refresh_positions = False
         if (ig_activities_datetime == None):
-            logger.debug('First time getting activity')
+            logger.info('First time getting activity')
             refresh_positions = True
         else:
             if (datetime.now() > (ig_activities_datetime + timedelta(seconds = 10))):
-                logger.debug('Activity out of date, refresh')
+                logger.info('Activity out of date, refresh')
                 refresh_positions = True
         if (refresh_positions and ig_cst != None):
             ig_activities = []
@@ -150,11 +152,11 @@ class ig_rest:
 
             resp = requests.get(ig_url + 'history/activity/' + str(time_period), headers=req_headers)
             if (resp.status_code == 401):
-                logger.debug("401 return code, try logging in again")
+                logger.warning("401 return code, try logging in again")
                 ig_cst = None
                 ig_rest.login()
             elif (resp.status_code == 200):
-                logger.debug("200 return code, all good")
+                logger.info("200 return code, all good")
                 json_data = json.loads(resp.text)
                 #logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
                 for act_i in json_data["activities"]:
@@ -165,7 +167,7 @@ class ig_rest:
                 logger.error('** Failed to get activities : {}'.format(str(resp.status_code)))
             ig_activities_datetime = datetime.now()
         else:
-            logger.debug('Take activity from cache')
+            logger.info('Take activity from cache')
 
         return ig_activities
 
