@@ -33,6 +33,7 @@
           <th>Gross Profit</th>
           <th>Deductions</th>
           <th>Net Profit</th>
+          <th>Return</th>
           <th>Balance</th>
         </tr>
        </thead>
@@ -45,6 +46,7 @@
             <td>£{{ member.gross_profit |floatformat:2|intcomma}}</td>
             <td>£{{ member.deductions |floatformat:2|intcomma}}</td>
             <td>£{{ member.net_profit |floatformat:2|intcomma}}</td>
+            <td>{{ member.return_percentage |floatformat:2|intcomma}}%</td>
             <td>£{{ member.balance |floatformat:2|intcomma}}</td>
         </tr>
         {% endfor %}
@@ -55,6 +57,7 @@
             <td>£{{ total_gross_profit |floatformat:2|intcomma}}</td>
             <td>£{{ total_deductions |floatformat:2|intcomma}}</td>
             <td>£{{ total_net_profit |floatformat:2|intcomma}}</td>
+            <td></td>
             <td>£{{ total_balance |floatformat:2|intcomma}}</td>
         </tr>
        </tbody>

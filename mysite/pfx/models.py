@@ -77,6 +77,10 @@ class Member(models.Model):
         return (self.calculated_trade_size / Member.objects.all().aggregate(Sum('calculated_trade_size')).get('calculated_trade_size__sum',0.00))
 
     @property
+    def return_percentage(self):
+        return (100 * self.net_profit / (self.cash_deposit + self.net_profit))
+
+    @property
     def cash_deposit(self):
         return IndividualCash.objects.filter(member_id=self.id).aggregate(Sum('size')).get('size__sum', 0.00)
 
