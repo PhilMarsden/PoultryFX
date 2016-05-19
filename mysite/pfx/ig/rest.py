@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 logger.info('IG REST Initialised')
 
 ig_securitytoken = ""
-ig_cst = ""
+ig_cst = None
 ig_account_id = ""
 ig_json_positions = []
 ig_positions_datetime = None
@@ -27,20 +27,16 @@ ig_instrument_urls = {
 class ig_rest:
     @staticmethod
     def need_password():
-        if (ig_password == "UNKNOWN"):
-            #print("Password UNKNOWN")
+        if (ig_password == None):
             return True
         else:
-            #print("Password entered")
             return False
 
     @staticmethod
     def need_login():
-        if (ig_cst == ""):
-            #print("Login Needed")
+        if (ig_cst == None):
             return True
         else:
-            #print("CST Set - Login performed")
             return False
 
     @staticmethod
@@ -55,39 +51,36 @@ class ig_rest:
     @staticmethod
     def login():
         global ig_password,logger
-        body = {
-            "identifier": ig_identifier,
-            "password": ig_password
-        }
-        headers = {
-            "X-IG-API-KEY": ig_apikey
-        }
+        if (ig_password != None) and (ig_cst == None):
+            body = {
+                "identifier": ig_identifier,
+                "password": ig_password
+            }
+            headers = {
+                "X-IG-API-KEY": ig_apikey
+            }
 
-        resp = requests.post(ig_url + 'session', json=body, headers=headers)
+            resp = requests.post(ig_url + 'session', json=body, headers=headers)
 
-        if (resp.status_code == 200):
-            global ig_cst,ig_securitytoken,ig_account_id
-            ig_cst = resp.headers["CST"]
-            ig_securitytoken = resp.headers["X-SECURITY-TOKEN"]
+            if (resp.status_code == 200):
+                global ig_cst,ig_securitytoken,ig_account_id
+                ig_cst = resp.headers["CST"]
+                ig_securitytoken = resp.headers["X-SECURITY-TOKEN"]
 
-            json_data = json.loads(resp.text)
-            ig_account_id = json_data["accounts"][0]["accountId"]
-        else:
-            logger.debug("Login failed - Restting password to Unknown, response code " + str(resp.status_code))
-            logger.debug(body)
-            logger.debug(headers)
-            logger.debug(resp.url)
-            logger.debug(resp.content)
-            ig_password = "UNKNOWN"
-
-        #print(ig_cst)
-        #print(ig_securitytoken)
-
-        return 0
+                json_data = json.loads(resp.text)
+                ig_account_id = json_data["accounts"][0]["accountId"]
+            else:
+                logger.debug("Login failed - Restting password to NONE, response code " + str(resp.status_code))
+                logger.debug(body)
+                logger.debug(headers)
+                logger.debug(resp.url)
+                logger.debug(resp.content)
+                ig_password = None
+                ig_cst = None
 
     @staticmethod
     def get_positions(member = None):
-        global logger, ig_positions_datetime,ig_json_positions
+        global logger, ig_positions_datetime,ig_json_positions,ig_cst
         logger.info('Get positions')
 
         refresh_positions = False
@@ -99,7 +92,7 @@ class ig_rest:
                 logger.debug('Positions out of date, refresh')
                 refresh_positions = True
 
-        if (refresh_positions):
+        if (refresh_positions and ig_cst != None):
             req_headers = {
                 "X-IG-API-KEY": ig_apikey,
                 "X-SECURITY-TOKEN": ig_securitytoken,
@@ -109,6 +102,7 @@ class ig_rest:
             resp = requests.get(ig_url + 'positions', headers=req_headers)
             if (resp.status_code == 401):
                 logger.debug("401 return code, try logging in again")
+                ig_cst = None
                 ig_rest.login()
             elif (resp.status_code == 200):
                 logger.debug("200 return code, all good")
@@ -129,7 +123,7 @@ class ig_rest:
 
     @staticmethod
     def get_activity(include_all):
-        global logger, ig_activities,ig_activities_datetime
+        global logger, ig_activities,ig_activities_datetime,ig_cst
         logger.info('Get activity')
 
         refresh_positions = False
@@ -140,7 +134,7 @@ class ig_rest:
             if (datetime.now() > (ig_activities_datetime + timedelta(seconds = 10))):
                 logger.debug('Activity out of date, refresh')
                 refresh_positions = True
-        if (refresh_positions):
+        if (refresh_positions and ig_cst != None):
             ig_activities = []
             req_headers = {
                 "X-IG-API-KEY": ig_apikey,
@@ -157,6 +151,7 @@ class ig_rest:
             resp = requests.get(ig_url + 'history/activity/' + str(time_period), headers=req_headers)
             if (resp.status_code == 401):
                 logger.debug("401 return code, try logging in again")
+                ig_cst = None
                 ig_rest.login()
             elif (resp.status_code == 200):
                 logger.debug("200 return code, all good")
