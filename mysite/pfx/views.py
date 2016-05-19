@@ -27,6 +27,10 @@ def profile(request):
         'positions': positions,
         'fun_fund' : fun_fund
     }
+    if len(trades) != 0:
+        logger.debug("Auto refresh = True")
+        context['autorefresh'] = True
+
     return HttpResponse(template.render(context, request))
 
 

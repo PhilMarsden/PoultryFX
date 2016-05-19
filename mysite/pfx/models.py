@@ -160,8 +160,8 @@ def total_calculated_trade_size():
     return Member.objects.all().aggregate(Sum('calculated_trade_size')).get('calculated_trade_size__sum', 0.00)
 
 def total_gross_profit():
-    p1 = IndividualPL.objects.all().aggregate(Sum('profit')).get('profit__sum',0.00)
-    p2 = IGPL.objects.all().aggregate(Sum('net_profit')).get('net_profit__sum', 0.00)
+    p1 = round(IndividualPL.objects.all().aggregate(Sum('profit')).get('profit__sum',0.00),2)
+    p2 = round(IGPL.objects.all().aggregate(Sum('net_profit')).get('net_profit__sum', 0.00),2)
     logger.info('Profit from individual trades = ' + str(p1))
     logger.info('Profit from trades = ' + str(p2))
     if (p1 != p2):

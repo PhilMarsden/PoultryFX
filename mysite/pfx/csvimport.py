@@ -153,10 +153,6 @@ m1.save()
 m1.set_calculated_trade_size()
 
 # Phil automatic trade size
-m1 = Member.objects.get(user=User.objects.get(email='phil.marsden@softwire.com'))
-m1.automatic_trade_size = True
-m1.save()
-m1.set_calculated_trade_size()
 
 member_list = Member.objects.all()
 for m1 in member_list:
@@ -164,4 +160,4 @@ for m1 in member_list:
     m1.save()
     m1.set_calculated_trade_size()
 
-#import_csv(csv_filepathname + '2.csv')
+import_csv(csv_filepathname + '2.csv')
