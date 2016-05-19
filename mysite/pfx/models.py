@@ -48,16 +48,33 @@ class IGPL(models.Model):
 
 class Member(models.Model):
     user = models.OneToOneField(User, editable=True, unique=True)
-    current_trade_size = models.FloatField()
+    manual_trade_size = models.FloatField()
+    calculated_trade_size = models.FloatField(default = 0)
     current_commission = models.FloatField()
     current_fun_fund =  models.FloatField()
+    automatic_trade_size = models.BooleanField(default=False)
+
+    @staticmethod
+    def set_all_trade_sizes():
+        member_list = Member.objects.all()
+        for m1 in member_list:
+            m1.set_calculated_trade_size()
+
+
     @property
     def name(self):
         return self.user.get_full_name()
 
+    def set_calculated_trade_size(self):
+        if (self.automatic_trade_size):
+            self.calculated_trade_size = round((self.balance - 150.0) / 300.0,0)
+        else:
+            self.calculated_trade_size = self.manual_trade_size
+        self.save()
+
     @property
     def percentage_of_trades(self):
-        return (self.current_trade_size / Member.objects.all().aggregate(Sum('current_trade_size')).get('current_trade_size__sum',0.00))
+        return (self.calculated_trade_size / Member.objects.all().aggregate(Sum('calculated_trade_size')).get('calculated_trade_size__sum',0.00))
 
     @property
     def cash_deposit(self):
@@ -139,8 +156,8 @@ def total_commission():
 def total_cash():
     return IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum', 0.00)
 
-def total_current_trade_size():
-    return Member.objects.all().aggregate(Sum('current_trade_size')).get('current_trade_size__sum', 0.00)
+def total_calculated_trade_size():
+    return Member.objects.all().aggregate(Sum('calculated_trade_size')).get('calculated_trade_size__sum', 0.00)
 
 def total_gross_profit():
     p1 = IndividualPL.objects.all().aggregate(Sum('profit')).get('profit__sum',0.00)

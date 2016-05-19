@@ -53,20 +53,20 @@ def bootstrap_data():
     u5 = User.objects.get(email='seancurran78@googlemail.com')
     u6 = User.objects.get(email='crowecameron@hotmail.com')
 
-    m1 = Member(user = u1,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
+    m1 = Member(user = u1,manual_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
     m1.save()
-    m2 = Member(user = u2,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.01)
+    m2 = Member(user = u2,manual_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.01)
     m2.save()
-    m3 = Member(user = u3,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
+    m3 = Member(user = u3,manual_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
     m3.save()
-    m4 = Member(user = u4,current_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.01)
+    m4 = Member(user = u4,manual_trade_size = 20,current_commission = 0.05, current_fun_fund = 0.01)
     m4.save()
-    m5 = Member(user = u5,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
+    m5 = Member(user = u5,manual_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
     m5.save()
-    m6 = Member(user = u6,current_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
+    m6 = Member(user = u6,manual_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
     m6.save()
 
-
+    Member.set_all_trade_sizes()
 
     #m1 = Member.objects.get(user = u1)
     #m2 = Member.objects.get(user = u2)
@@ -75,17 +75,20 @@ def bootstrap_data():
     #m5 = Member.objects.get(user = u5)
     #m6 = Member.objects.get(user = u6)
 
-    ic1 = IndividualCash(member = m1, size = 3340, transaction_date = datetime.datetime.now())
+    date1 = datetime.datetime(2016,5,3)
+    ic1 = IndividualCash(member = m1, size = 3340, transaction_date = date1)
     ic1.save()
-    ic2 = IndividualCash(member = m2, size = 6000, transaction_date = datetime.datetime.now())
+    ic2 = IndividualCash(member = m2, size = 6000, transaction_date = date1)
     ic2.save()
-    ic3 = IndividualCash(member = m3, size = 3000, transaction_date = datetime.datetime.now())
+    ic3 = IndividualCash(member = m3, size=3000, transaction_date=date1)
     ic3.save()
-    ic4 = IndividualCash(member = m4, size = 6000, transaction_date = datetime.datetime.now())
+    ic3 = IndividualCash(member = m3, size = 2500, transaction_date = datetime.datetime(2016,5,19))
+    ic3.save()
+    ic4 = IndividualCash(member = m4, size = 6000, transaction_date = date1)
     ic4.save()
-    ic5 = IndividualCash(member = m5, size = 3000, transaction_date = datetime.datetime.now())
+    ic5 = IndividualCash(member = m5, size = 3000, transaction_date = date1)
     ic5.save()
-    ic6 = IndividualCash(member = m6, size = 3000, transaction_date = datetime.datetime.now())
+    ic6 = IndividualCash(member = m6, size = 3000, transaction_date = date1)
     ic6.save()
 
 
@@ -141,8 +144,18 @@ def import_csv(csv_filename):
 
 bootstrap_data()
 import_csv(csv_filepathname + '1.csv')
+
+# Dan Add more money and make trade size 20
 u1 = User.objects.get(email='dan.shavick@softwire.com')
 m1 = Member.objects.get(user=u1)
-m1.current_trade_size = 20
+m1.manual_trade_size = 20
 m1.save()
+m1.set_calculated_trade_size()
+
+# Phil automatic trade size
+m1 = Member.objects.get(user=User.objects.get(email='phil.marsden@softwire.com'))
+m1.automatic_trade_size = True
+m1.save()
+m1.set_calculated_trade_size()
+
 #import_csv(csv_filepathname + '2.csv')
