@@ -2,6 +2,7 @@ import requests
 import json
 from pfx.ig.rest_private import *
 from datetime import datetime,timedelta
+from pfx.models import IGPL
 # import the logging library
 import logging
 
@@ -254,8 +255,8 @@ class ig_activity:
         self.ig_act_limit = json_position['limit']
         self.ig_act_marketName = json_position['marketName']
         self.ig_act_stop = json_position['stop']
-        self.ig_act_level = json_position['level']
-        self.ig_act_size = json_position['size']
+        self.ig_act_level = float(json_position['level'])
+        self.ig_act_size = float(json_position['size'])
         self.ig_act_dealid = json_position['dealId']
         self.ig_act_datetime = json_position['date'] + json_position['time']
         if self.ig_act_marketName in ig_instrument_urls:
@@ -264,6 +265,82 @@ class ig_activity:
             self.ig_act_url = ""
         logger.debug('URL for {} = {}'.format(self.ig_act_marketName, self.ig_act_url))
 
+    @staticmethod
+    def get_act(dealid):
+        for act in ig_activities:
+            if (act.ig_act_dealid == dealid):
+                return act
+        return None
+
+    @property
+    def open_activity(self):
+        for act in ig_activities:
+            if (act.ig_act_dealid[-8:] == self.matched_open_position):
+                logger.debug('Found matching open activity {}'.format(act.ig_act_dealid))
+                return act
+        return None
+
+    def add_trade(self):
+        logger.debug('Adding trade for deal id {}'.format(self.ig_act_dealid))
+        matching_act = self.open_activity
+        igpl = IGPL()
+        igpl.closing_ref = self.ig_act_dealid[-8:]
+        igpl.closed_date = datetime.strptime(self.ig_act_datetime, "%d/%m/%y%H:%M").strftime("%Y-%m-%d")
+        igpl.opening_ref = matching_act.ig_act_dealid[-8:]
+        igpl.opening_date = datetime.strptime(matching_act.ig_act_datetime, "%d/%m/%y%H:%M").strftime("%Y-%m-%d")
+        igpl.market = self.ig_act_marketName
+        igpl.period = "DFB"
+        if (self.ig_act_size < 0):
+            igpl.direction = "BUY"
+        else:
+            igpl.direction = "SELL"
+        igpl.size = abs(self.ig_act_size)
+        igpl.opening_price = matching_act.ig_act_level
+        igpl.closing_price = self.ig_act_level
+        igpl.trade_ccy = "GBP"
+        if (igpl.direction == "BUY"):
+            igpl.gross_profit = igpl.size * (igpl.closing_price - igpl.opening_price)
+        else:
+            igpl.gross_profit = igpl.size * (igpl.opening_price - igpl.closing_price)
+        igpl.funding = 0
+        igpl.borrowing = 0
+        igpl.dividends = 0
+        igpl.lrprem = 0
+        igpl.others = 0
+        igpl.commccy = 0
+        igpl.comm = 0
+        igpl.net_profit = igpl.gross_profit
+        igpl.save()
+
+    @property
+    def add_trade_url(self):
+        ret_url = "?dealid=" + self.ig_act_dealid
+        logger.debug('URL for adding trade = {}'.format(ret_url))
+        return ret_url
+
+    #
+    @property
+    def matched_open_position(self):
+        if self.ig_act_result.startswith('Position/s closed:'):
+            # Its a closing trade so see if we have a trade for it
+            return self.ig_act_result.lstrip('Position/s closed: ')
+        else:
+            return None
+
+    @property
+    def trade_needed(self):
+        if self.ig_act_result.startswith('Position/s closed:'):
+            # Its a closing trade so see if we have a trade for it
+            act_open_ref = self.matched_open_position
+            logger.info('Checking for trade with ref:{}:'.format(act_open_ref))
+            try:
+                igpls = IGPL.objects.get(opening_ref = act_open_ref)
+                return False
+            except:
+                logger.info('Trade ref doesnt exist')
+                return True
+        else:
+            return False
 
 if (ig_rest.need_password() == False):
     ig_rest.login()

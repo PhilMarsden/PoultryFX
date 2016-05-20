@@ -2,7 +2,7 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.decorators import login_required,permission_required
 from pfx.models import Member,total_fun_fund,total_cash,total_gross_profit,total_commission,total_calculated_trade_size,total_net_profit,total_return
-from pfx.ig.rest import ig_rest
+from pfx.ig.rest import ig_rest,ig_activity
 
 from .models import IGPL,IndividualPL,IndividualCash
 
@@ -80,7 +80,7 @@ def ig_trades(request):
        return retval
 
    template = loader.get_template('pfx/ig_view.html')
-   trades = IGPL.objects.all()
+   trades = IGPL.objects.all().order_by('-closed_date')
    context = {'trades':trades, 'show_trades':True, 'show_positions':False, 'show_activities':False}
    return HttpResponse(template.render(context, request))
 
@@ -102,6 +102,15 @@ def ig_activities(request):
    if (retval != None):
        return retval
 
+   if 'dealid' in request.GET:
+       deal_id_to_add = request.GET['dealid']
+       logger.debug('Deal id {} to be added as trade'.format(deal_id_to_add))
+       act = ig_activity.get_act(deal_id_to_add)
+       if (act == None):
+            logger.debug('Cannot find deal id {}'.format(deal_id_to_add))
+       else:
+            logger.debug('Adding trade for deal id {}'.format(deal_id_to_add))
+            act.add_trade()
    template = loader.get_template('pfx/ig_view.html')
    activities = ig_rest.get_activity(include_all=False)
    context = {'activities':activities, 'show_activities':True, 'show_positions':False, 'show_trades':False }

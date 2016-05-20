@@ -111,6 +111,7 @@
           <th>Stop</th>
           <th>Market</th>
           <th>Size</th>
+          <th>Add Trade</th>
         </tr>
        </thead>
        <tbody>
@@ -134,6 +135,13 @@
             </td>
 
             <td>{{ act.ig_act_size  }}</td>
+            <td>
+                {% if act.trade_needed %}
+                    <a href="{{ act.add_trade_url }}" >
+                        Add Trade
+                    </a>
+                {% endif %}
+            </td>
         </tr>
         {% endfor %}
        </tbody>
