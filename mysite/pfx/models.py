@@ -160,6 +160,12 @@ def total_commission():
 def total_cash():
     return IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum', 0.00)
 
+def total_net_profit():
+    return total_gross_profit() + total_fun_fund() + total_commission()
+
+def total_return():
+    return total_net_profit() / (total_cash() + total_net_profit())
+
 def total_calculated_trade_size():
     return Member.objects.all().aggregate(Sum('calculated_trade_size')).get('calculated_trade_size__sum', 0.00)
 

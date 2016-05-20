@@ -1,7 +1,7 @@
 from django.http import HttpResponse,HttpResponseRedirect
 from django.template import loader
 from django.contrib.auth.decorators import login_required,permission_required
-from pfx.models import Member,total_fun_fund,total_cash,total_gross_profit,total_commission,total_calculated_trade_size
+from pfx.models import Member,total_fun_fund,total_cash,total_gross_profit,total_commission,total_calculated_trade_size,total_net_profit,total_return
 from pfx.ig.rest import ig_rest
 
 from .models import IGPL,IndividualPL,IndividualCash
@@ -136,8 +136,9 @@ def members(request):
                   'total_fun_fund':-total_fun_fund(),
                   'total_deductions':total_commission() + total_fun_fund(),
                   'total_commission':-total_commission(),
-                  'total_net_profit':total_gross_profit() + total_commission() + total_fun_fund(),
+                  'total_net_profit':total_net_profit(),
                   'total_balance':total_cash() + total_gross_profit() + total_commission() + total_fun_fund(),
+                  'total_return':100 * (total_return()),
                   'total_ig_balance':total_cash() + total_gross_profit()}
 
    return HttpResponse(template.render(context, request))
