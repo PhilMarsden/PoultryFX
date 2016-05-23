@@ -96,7 +96,7 @@ class pfx_imap(Thread):
                 logger.debug("ERROR: IMAP Error", rv2)
 
             M.logout()
-        except imaplib.IMAP4.error:
+        except:
             logger.error("IMAP Error")
 
         logger.info('Scanning Emails - Stop')
