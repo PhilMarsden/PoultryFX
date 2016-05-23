@@ -10,6 +10,24 @@ logger = logging.getLogger(__name__)
 print("enable logging " + __name__)
 logger.info('Models Initialised')
 
+
+class TradeEmail(models.Model):
+    message_id = models.CharField(max_length=255, unique=True)
+    trade_date = models.CharField(max_length=32)
+    time_live = models.CharField(max_length=32)
+    market = models.CharField(max_length=255)
+    start_price = models.FloatField()
+    stop_price = models.FloatField()
+    target_price = models.FloatField()
+
+    def __str__(self):
+        return '%s' % (self.message_id)
+    class Meta:
+        verbose_name = "Trade Email"
+        verbose_name_plural = "Trade Emails"
+
+
+
 class IGPL(models.Model):
     closing_ref = models.CharField(max_length=8, unique=True)
     closed_date = models.DateField()
