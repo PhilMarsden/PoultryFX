@@ -3,6 +3,7 @@ from django.template import loader
 from django.contrib.auth.decorators import login_required,permission_required
 from pfx.models import Member,total_fun_fund,total_cash,total_gross_profit,total_commission,total_calculated_trade_size,total_net_profit,total_return
 from pfx.ig.rest import ig_rest,ig_activity
+from pfx.ig.imap import pfx_imap
 
 from .models import IGPL,IndividualPL,IndividualCash
 
