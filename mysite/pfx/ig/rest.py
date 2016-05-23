@@ -349,10 +349,8 @@ if (ig_rest.need_password() == False):
 
 from pfx.ig.imap import pfx_imap
 
-from threading import Event
+#from threading import Event
 #stopFlag = Event()
 #thread = pfx_imap(stopFlag)
 #thread.start()
-#print("*************")
-# this will stop the timer
 #stopFlag.set()
