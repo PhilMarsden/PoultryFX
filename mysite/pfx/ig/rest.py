@@ -346,3 +346,12 @@ if (ig_rest.need_password() == False):
     ig_rest.login()
 
 #ig_rest.get_activity()
+
+from pfx.ig.imap import pfx_imap
+
+from threading import Event
+stopFlag = Event()
+thread = pfx_imap(stopFlag)
+thread.start()
+# this will stop the timer
+#stopFlag.set()

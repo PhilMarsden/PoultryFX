@@ -6,3 +6,4 @@ mysite/pfx/static/pfx/bootstrap/
 mysite/db.sqlite3
 mysite/pfx/ig/rest_private.py
 *.log
+mysite/pfx/ig/imap_private.py
