@@ -26,7 +26,7 @@ django.setup()
 
 from django.contrib.auth.models import User
 from pfx import models
-from pfx.models import Member, IGPL, IndividualPL, IndividualCash
+from pfx.models import Member, IGPL, IndividualPL, IndividualCash, total_calculated_trade_size
 
 
 def bootstrap_data():
@@ -41,11 +41,13 @@ def bootstrap_data():
     #u3 = User.objects.create_user('nigel.ratcliffe@ensoft.co.uk','nigel.ratcliffe@ensoft.co.uk','jellyfish')
     #u4 = User.objects.create_user('seancurran78@googlemail.com','seancurran78@googlemail.com','jellyfish')
     #u5 = User.objects.create_user('crowecameron@hotmail.com','crowecameron@hotmail.com','jellyfish')
+    #u6 = User.objects.create_user('aronrollin@hotmail.com','aronrollin@hotmail.com','jellyfish')
     #u1.save()
     #u2.save()
     #u3.save()
     #u4.save()
     #u5.save()
+    #u6.save()
     u1 = User.objects.get(email='phil.marsden@softwire.com')
     u2 = User.objects.get(email = 'john.cooper@ensoft.co.uk')
     u3 = User.objects.get(email = 'dan.shavick@softwire.com')
@@ -76,7 +78,7 @@ def bootstrap_data():
     #m6 = Member.objects.get(user = u6)
 
     date1 = datetime.datetime(2016,5,3)
-    ic1 = IndividualCash(member = m1, size = 3340, transaction_date = date1)
+    ic1 = IndividualCash(member = m1, size = 3340.90, transaction_date = date1)
     ic1.save()
     ic2 = IndividualCash(member = m2, size = 6000, transaction_date = date1)
     ic2.save()
@@ -88,10 +90,8 @@ def bootstrap_data():
     ic4.save()
     ic5 = IndividualCash(member = m5, size = 3000, transaction_date = date1)
     ic5.save()
-    ic6 = IndividualCash(member = m6, size = 3000, transaction_date = date1)
+    ic6 = IndividualCash(member=m6, size=3000, transaction_date=date1)
     ic6.save()
-
-
 
 
 def mycsv_reader(csv_reader):
@@ -105,7 +105,7 @@ def mycsv_reader(csv_reader):
 def import_csv(csv_filename):
     reader = mycsv_reader(csv.reader(open(csv_filename, encoding='utf-16', mode='rU'), dialect='excel-tab'))
     start_import = False
-
+    igpls = []
     for row in reader:
         if start_import:
             print(row)
@@ -134,6 +134,7 @@ def import_csv(csv_filename):
             igpl.comm = float(row[18])
             igpl.net_profit = float(row[19])
             igpl.save()
+            igpls.append(igpl)
             print("Imported",row[0])
 
         try:
@@ -141,18 +142,21 @@ def import_csv(csv_filename):
                 start_import = True
         except:
             start_import = False
+    return igpls
 
 bootstrap_data()
-import_csv(csv_filepathname + '1.csv')
+igpls = import_csv(csv_filepathname + '1.csv')
+for igpl in igpls:
+    igpl.AddAllIndividualPL()
 
-# Dan Add more money and make trade size 20
+#Dan Add more money and make trade size 20
 u1 = User.objects.get(email='dan.shavick@softwire.com')
 m1 = Member.objects.get(user=u1)
 m1.manual_trade_size = 20
 m1.save()
 m1.set_calculated_trade_size()
 
-# Phil automatic trade size
+#Phil automatic trade size
 
 member_list = Member.objects.all()
 for m1 in member_list:
@@ -160,4 +164,53 @@ for m1 in member_list:
     m1.save()
     m1.set_calculated_trade_size()
 
-import_csv(csv_filepathname + '2.csv')
+igpls = import_csv(csv_filepathname + '2.csv')
+for igpl in igpls:
+    igpl.AddAllIndividualPL()
+
+u1 = User.objects.get(email='phil.marsden@softwire.com')
+u3 = User.objects.get(email='dan.shavick@softwire.com')
+u5 = User.objects.get(email='seancurran78@googlemail.com')
+u6 = User.objects.get(email='crowecameron@hotmail.com')
+
+m1 = Member.objects.get(user=u1)
+m3 = Member.objects.get(user=u3)
+m5 = Member.objects.get(user=u5)
+m6 = Member.objects.get(user=u6)
+m1.calculated_trade_size = total_calculated_trade_size() /4
+m3.calculated_trade_size = total_calculated_trade_size() /4
+m5.calculated_trade_size = total_calculated_trade_size() /4
+m6.calculated_trade_size = total_calculated_trade_size() /4
+m1.current_commission = 0
+m3.current_commission = 0
+m5.current_commission = 0
+m6.current_commission = 0
+m1.current_fun_fund = 0
+m3.current_fun_fund= 0
+m5.current_fun_fund = 0
+m6.current_fun_fund = 0
+
+igpls = import_csv(csv_filepathname + '3.csv')
+for igpl in igpls:
+    igpl.AddIndividualPL(m1)
+    igpl.AddIndividualPL(m3)
+    igpl.AddIndividualPL(m5)
+    igpl.AddIndividualPL(m6)
+
+m1.current_commission = 0.05
+m3.current_commission = 0.05
+m5.current_commission = 0.05
+m6.current_commission = 0.05
+m1.current_fun_fund = 0.01
+m3.current_fun_fund= 0.01
+m5.current_fun_fund = 0.01
+m6.current_fun_fund = 0.01
+
+u7 = User.objects.get(email='aronrollin@hotmail.com')
+m7 = Member(user=u7, manual_trade_size=10, current_commission=0.05, current_fun_fund=0.01)
+m7.save()
+date7 = datetime.datetime(2016, 5, 24)
+ic7 = IndividualCash(member=m7, size=3000, transaction_date=date7)
+ic7.save()
+
+m7.set_calculated_trade_size()

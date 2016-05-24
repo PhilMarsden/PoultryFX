@@ -50,11 +50,16 @@ class IGPL(models.Model):
     comm = models.FloatField()
     net_profit = models.FloatField()
 
-    def save(self, *args, **kwargs):
-        super(IGPL, self).save(*args, **kwargs) # Call the "real" save() method.
+    def AddIndividualPL(self,m1):
+        IndividualPL.AddNewCalculatedEntry(m1, self)
+
+    def AddAllIndividualPL(self):
         member_list = Member.objects.all()
         for m1 in member_list:
-            IndividualPL.AddNewCalculatedEntry(m1, self)
+            self.AddIndividualPL(m1)
+
+    def save(self, *args, **kwargs):
+        super(IGPL, self).save(*args, **kwargs) # Call the "real" save() method.
 
     def __str__(self):
         return '%s %s' % (self.opening_ref, self.opening_date)
@@ -99,20 +104,31 @@ class Member(models.Model):
 
     @property
     def cash_deposit(self):
-        return IndividualCash.objects.filter(member_id=self.id).aggregate(Sum('size')).get('size__sum', 0.00)
+        tcash = IndividualCash.objects.filter(member_id=self.id).aggregate(Sum('size')).get('size__sum', 0.00)
+        return 0 if tcash == None else tcash
 
     @property
     def gross_profit(self):
-        return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum',0.00)
+        tgross = IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum',0.00)
+        return 0 if tgross == None else tgross
 
     @property
     def net_profit(self):
-        return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum', 0.00) + self.deductions
+        tprofit = IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('profit')).get('profit__sum', 0.00)
+        if tprofit == None:
+            tprofit = 0
+        return (tprofit + self.deductions)
 
     @property
     def deductions(self):
-         return IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('commission')).get('commission__sum', 0.00) + \
-                IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('fun_fund')).get('fun_fund__sum', 0.00)
+         tcomm = IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('commission')).get('commission__sum', 0.00)
+         if tcomm == None:
+             tcomm = 0
+         tfun = IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('fun_fund')).get('fun_fund__sum', 0.00)
+         if tfun == None:
+             tfun = 0
+         return  tcomm + tfun
+
 
     @property
     def balance(self):
@@ -174,13 +190,16 @@ class IndividualCash(models.Model):
         verbose_name_plural = "Individual Cash Entries"
 
 def total_fun_fund():
-    return IndividualPL.objects.all().aggregate(Sum('fun_fund')).get('fun_fund__sum',0.00)
+    tfun = IndividualPL.objects.all().aggregate(Sum('fun_fund')).get('fun_fund__sum',0.00)
+    return 0 if tfun == None else tfun
 
 def total_commission():
-    return IndividualPL.objects.all().aggregate(Sum('commission')).get('commission__sum',0.00)
+    tcom = IndividualPL.objects.all().aggregate(Sum('commission')).get('commission__sum',0.00)
+    return 0 if tcom == None else tcom
 
 def total_cash():
-    return IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum', 0.00)
+    tcash = IndividualCash.objects.all().aggregate(Sum('size')).get('size__sum', 0.00)
+    return 0 if tcash == None else tcash
 
 def total_net_profit():
     return total_gross_profit() + total_fun_fund() + total_commission()
@@ -197,7 +216,10 @@ def total_gross_profit():
     logger.info('Profit from individual trades = ' + str(p1))
     logger.info('Profit from trades = ' + str(p2))
     if (p1 != p2):
-        raise Exception("Profits mismatch")
+        logger.error('Profit from individual trades = ' + str(p1))
+        logger.error('Profit from trades = ' + str(p2))
+        logger.error('*** Profit mismatch ***')
+        #raise Exception("Profits mismatch")
     else:
         return p1
 
