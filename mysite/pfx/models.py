@@ -10,6 +10,9 @@ logger = logging.getLogger(__name__)
 print("enable logging " + __name__)
 logger.info('Models Initialised')
 
+class PositionViews(models.Model):
+    deal_id = models.CharField(max_length=255, unique=True)
+    show_all = models.BooleanField(default=False)
 
 class TradeEmail(models.Model):
     message_id = models.CharField(max_length=255, unique=True)

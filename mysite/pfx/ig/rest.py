@@ -4,7 +4,7 @@ from pfx.ig.rest_private import *
 from datetime import datetime,timedelta
 from pfx.models import IGPL
 # import the logging library
-import logging
+import logging,sys
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -349,10 +349,12 @@ if (ig_rest.need_password() == False):
 
 #ig_rest.get_activity()
 
-from pfx.ig.imap import pfx_imap
+logger.debug("argv {}".format(sys.argv[1]))
+if (sys.argv[1] == "runserver"):
+    from pfx.ig.imap import pfx_imap
 
-from threading import Event
-stopFlag = Event()
-thread = pfx_imap(stopFlag)
-thread.start()
-#stopFlag.set()
+    from threading import Event
+    stopFlag = Event()
+    thread = pfx_imap(stopFlag)
+    thread.start()
+    #stopFlag.set()
