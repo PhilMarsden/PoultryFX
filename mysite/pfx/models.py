@@ -13,6 +13,12 @@ logger.info('Models Initialised')
 class PositionViews(models.Model):
     deal_id = models.CharField(max_length=255, unique=True)
     show_all = models.BooleanField(default=False)
+    class Meta:
+        verbose_name = "Position View"
+        verbose_name_plural = "Position Views"
+    def __str__(self):
+        return '%s Show All : %s' % (self.deal_id,self.show_all)
+
 
 class TradeEmail(models.Model):
     message_id = models.CharField(max_length=255, unique=True)

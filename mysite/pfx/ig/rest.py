@@ -2,7 +2,7 @@ import requests
 import json
 from pfx.ig.rest_private import *
 from datetime import datetime,timedelta
-from pfx.models import IGPL
+from pfx.models import IGPL,PositionViews
 # import the logging library
 import logging,sys
 
@@ -121,7 +121,14 @@ class ig_rest:
         positions = []
         for jposition in ig_json_positions:
             pos = ig_position(jposition, member)
-            positions.append(pos)
+            logger.debug("Checking for deal id {}".format(pos.ig_pos_dealid))
+            try:
+                posview = PositionViews.objects.get(deal_id = pos.ig_pos_dealid)
+            except:
+                posview = None
+
+            if (posview == None) or (posview.show_all):
+                positions.append(pos)
         return positions
 
     @staticmethod
