@@ -219,7 +219,7 @@ def total_gross_profit():
         logger.error('Profit from individual trades = ' + str(p1))
         logger.error('Profit from trades = ' + str(p2))
         logger.error('*** Profit mismatch ***')
-        #raise Exception("Profits mismatch")
+        raise Exception("Profits mismatch")
     else:
         return p1
 

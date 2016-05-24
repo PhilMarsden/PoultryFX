@@ -280,7 +280,7 @@ class ig_activity:
                 return act
         return None
 
-    def add_trade(self):
+    def add_trade(self,add_all_individualpls):
         logger.debug('Adding trade for deal id {}'.format(self.ig_act_dealid))
         matching_act = self.open_activity
         igpl = IGPL()
@@ -311,7 +311,9 @@ class ig_activity:
         igpl.comm = 0
         igpl.net_profit = igpl.gross_profit
         igpl.save()
-
+        if (add_all_individualpls):
+            igpl.AddAllIndividualPL()
+        return igpl
     @property
     def add_trade_url(self):
         ret_url = "?dealid=" + self.ig_act_dealid

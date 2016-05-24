@@ -111,7 +111,7 @@ def ig_activities(request):
             logger.debug('Cannot find deal id {}'.format(deal_id_to_add))
        else:
             logger.debug('Adding trade for deal id {}'.format(deal_id_to_add))
-            act.add_trade()
+            l_igpl = act.add_trade(True)
    template = loader.get_template('pfx/ig_view.html')
    activities = ig_rest.get_activity(include_all=False)
    context = {'activities':activities, 'show_activities':True, 'show_positions':False, 'show_trades':False }
