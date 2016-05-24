@@ -54,8 +54,7 @@ class IGPL(models.Model):
         super(IGPL, self).save(*args, **kwargs) # Call the "real" save() method.
         member_list = Member.objects.all()
         for m1 in member_list:
-            ipl1 = IndividualPL(member=m1, igpl=self)
-            ipl1.save()
+            IndividualPL.AddNewCalculatedEntry(m1, self)
 
     def __str__(self):
         return '%s %s' % (self.opening_ref, self.opening_date)
@@ -130,6 +129,19 @@ class IndividualPL(models.Model):
     commission = models.FloatField(default=0)
     fun_fund = models.FloatField(default=0)
 
+    @staticmethod
+    def AddNewCalculatedEntry(m1, igpl1):
+        ipl1 = IndividualPL(member=m1, igpl=igpl1)
+        ipl1.size = igpl1.size * m1.percentage_of_trades
+        ipl1.profit = igpl1.net_profit * m1.percentage_of_trades
+        ipl1.fun_fund = - max(ipl1.profit * m1.current_fun_fund,0.0)
+        ipl1.commission = - max(ipl1.profit * m1.current_commission,0.0)
+        logger.info('Commision {} from member {} based on Profit:{} Commission:{}'.format(ipl1.commission, ipl1.member,
+                                                                                          ipl1.profit,
+                                                                                          ipl1.member.current_commission))
+
+        ipl1.save()
+
     @property
     def deductions(self):
         return  self.commission + self.fun_fund
@@ -142,14 +154,6 @@ class IndividualPL(models.Model):
     #    return 1.0
 
     def save(self, *args, **kwargs):
-        self.size = self.igpl.size * self.member.percentage_of_trades
-        self.profit = self.igpl.net_profit * self.member.percentage_of_trades
-        self.fun_fund = - max(self.profit * self.member.current_fun_fund,0.0)
-        self.commission = - max(self.profit * self.member.current_commission,0.0)
-        logger.info('Commision {} from member {} based on Profit:{} Commission:{}'.format(self.commission, self.member,
-                                                                                          self.profit,
-                                                                                          self.member.current_commission))
-
         super(IndividualPL, self).save(*args, **kwargs) # Call the "real" save() method.
 
     def __str__(self):

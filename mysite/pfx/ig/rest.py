@@ -349,8 +349,8 @@ if (ig_rest.need_password() == False):
 
 from pfx.ig.imap import pfx_imap
 
-#from threading import Event
-#stopFlag = Event()
-#thread = pfx_imap(stopFlag)
-#thread.start()
+from threading import Event
+stopFlag = Event()
+thread = pfx_imap(stopFlag)
+thread.start()
 #stopFlag.set()

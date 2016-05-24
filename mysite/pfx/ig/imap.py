@@ -1,4 +1,10 @@
+EMAIL_ACCOUNT = "phil@marsdy.com"
+EMAIL_FOLDER = "INBOX"
+EMAIL_RECIPIENT = "phil.marsden@softwire.com"
+IMAP_SERVER="imap.europe.secureserver.net"
+
 from pfx.ig.imap_private import *
+
 
 from pfx.models import IGPL
 from pfx.models import TradeEmail
@@ -34,7 +40,7 @@ class pfx_imap(Thread):
     def scan_emails(self):
         logger.info('Scanning Emails - Start')
         try:
-            M = imaplib.IMAP4_SSL('imap.softwire.com')
+            M = imaplib.IMAP4_SSL(IMAP_SERVER)
             rv, data = M.login(EMAIL_ACCOUNT, EMAIL_PASSWORD)
             rv2, mailboxes = M.list()
             if rv2 == 'OK':
