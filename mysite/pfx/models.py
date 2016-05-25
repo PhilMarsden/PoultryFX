@@ -59,13 +59,13 @@ class IGPL(models.Model):
     comm = models.FloatField()
     net_profit = models.FloatField()
 
-    def AddIndividualPL(self,m1):
-        IndividualPL.AddNewCalculatedEntry(m1, self)
+    def AddIndividualPL(self,m1,member_list):
+        IndividualPL.AddNewCalculatedEntry(m1, self, member_list)
 
     def AddAllIndividualPL(self):
         member_list = Member.objects.all()
         for m1 in member_list:
-            self.AddIndividualPL(m1)
+            self.AddIndividualPL(m1,member_list)
 
     def save(self, *args, **kwargs):
         super(IGPL, self).save(*args, **kwargs) # Call the "real" save() method.
@@ -103,9 +103,11 @@ class Member(models.Model):
             self.calculated_trade_size = self.manual_trade_size
         self.save()
 
-    @property
-    def percentage_of_trades(self):
-        return (self.calculated_trade_size / Member.objects.all().aggregate(Sum('calculated_trade_size')).get('calculated_trade_size__sum',0.00))
+    def percentage_of_trades(self, all_members):
+        sum_tsize = 0
+        for m in all_members:
+            sum_tsize += m.calculated_trade_size
+        return (self.calculated_trade_size / sum_tsize)
 
     @property
     def return_percentage(self):
@@ -155,10 +157,10 @@ class IndividualPL(models.Model):
     fun_fund = models.FloatField(default=0)
 
     @staticmethod
-    def AddNewCalculatedEntry(m1, igpl1):
+    def AddNewCalculatedEntry(m1, igpl1,all_members):
         ipl1 = IndividualPL(member=m1, igpl=igpl1)
-        ipl1.size = igpl1.size * m1.percentage_of_trades
-        ipl1.profit = igpl1.net_profit * m1.percentage_of_trades
+        ipl1.size = igpl1.size * m1.percentage_of_trades(all_members)
+        ipl1.profit = igpl1.net_profit * m1.percentage_of_trades(all_members)
         ipl1.fun_fund = - max(ipl1.profit * m1.current_fun_fund,0.0)
         ipl1.commission = - max(ipl1.profit * m1.current_commission,0.0)
         logger.info('Commision {} from member {} based on Profit:{} Commission:{}'.format(ipl1.commission, ipl1.member,

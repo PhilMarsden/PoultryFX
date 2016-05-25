@@ -2,7 +2,7 @@ import requests
 import json
 from pfx.ig.rest_private import *
 from datetime import datetime,timedelta
-from pfx.models import IGPL,PositionViews
+from pfx.models import IGPL,PositionViews,Member
 # import the logging library
 import logging,sys
 
@@ -224,8 +224,9 @@ class ig_position:
     def __init__(self,json_position, member = None):
         global ig_instrument_urls
         percentage_to_apply = 1
+        member_list = Member.objects.all()
         if (member != None):
-            percentage_to_apply = member.percentage_of_trades
+            percentage_to_apply = member.percentage_of_trades(member_list)
         #print(json_position['position']['size'])
         self.ig_pos_size = json_position['position']['size'] * percentage_to_apply
         self.ig_pos_limit = json_position['position']['limitLevel']

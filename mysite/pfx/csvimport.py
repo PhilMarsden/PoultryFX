@@ -168,6 +168,7 @@ igpls = import_csv(csv_filepathname + '2.csv')
 for igpl in igpls:
     igpl.AddAllIndividualPL()
 
+# Meat Liquor Trades
 u1 = User.objects.get(email='phil.marsden@softwire.com')
 u3 = User.objects.get(email='dan.shavick@softwire.com')
 u5 = User.objects.get(email='seancurran78@googlemail.com')
@@ -191,11 +192,10 @@ m5.current_fun_fund = 0
 m6.current_fun_fund = 0
 
 igpls = import_csv(csv_filepathname + '3.csv')
+member_list = [m1,m3,m5,m6]
 for igpl in igpls:
-    igpl.AddIndividualPL(m1)
-    igpl.AddIndividualPL(m3)
-    igpl.AddIndividualPL(m5)
-    igpl.AddIndividualPL(m6)
+    for m1 in member_list:
+        igpl.AddIndividualPL(m1,member_list)
 
 m1.current_commission = 0.05
 m3.current_commission = 0.05
@@ -206,11 +206,22 @@ m3.current_fun_fund= 0.01
 m5.current_fun_fund = 0.01
 m6.current_fun_fund = 0.01
 
+# Add AAron
 u7 = User.objects.get(email='aronrollin@hotmail.com')
 m7 = Member(user=u7, manual_trade_size=10, current_commission=0.05, current_fun_fund=0.01)
 m7.save()
 date7 = datetime.datetime(2016, 5, 24)
 ic7 = IndividualCash(member=m7, size=3000, transaction_date=date7)
 ic7.save()
-
 m7.set_calculated_trade_size()
+
+# FTSE bet loss
+u1 = User.objects.get(email='phil.marsden@softwire.com')
+m1 = Member.objects.get(user=u1)
+m1.current_commission = 0
+m1.current_fun_fund = 0
+igpls = import_csv(csv_filepathname + '4.csv')
+member_list = [m1]
+for igpl in igpls:
+    for m1 in member_list:
+        igpl.AddIndividualPL(m1,member_list)
