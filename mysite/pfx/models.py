@@ -92,19 +92,21 @@ class Member(models.Model):
     automatic_trade_size = models.BooleanField(default=False)
 
     @staticmethod
-    def set_all_trade_sizes():
+    def set_all_trade_sizes(percent,points):
         member_list = Member.objects.all()
         for m1 in member_list:
-            m1.set_calculated_trade_size()
+            m1.set_calculated_trade_size(percent,points)
 
 
     @property
     def name(self):
         return self.user.get_full_name()
 
-    def set_calculated_trade_size(self):
+    def set_calculated_trade_size(self,percent,points):
         if (self.automatic_trade_size):
-            self.calculated_trade_size = round((self.balance - 150.0) / 300.0,0)
+            risk_per_trade = self.balance * percent / 100
+            pounds_per_point = risk_per_trade / points
+            self.calculated_trade_size = round((pounds_per_point - 0.5),0)
         else:
             self.calculated_trade_size = self.manual_trade_size
         self.save()

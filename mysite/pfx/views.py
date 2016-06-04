@@ -145,7 +145,10 @@ def members(request):
    else:
        if 'updatetradesizes' in request.GET:
            logger.info("Updating trade sizes")
-           Member.set_all_trade_sizes()
+           percent = int(request.GET['percent'])
+           points = int(request.GET['points'])
+           logger.debug('Updating trades for percent = {} points = {}'.format(percent,points))
+           Member.set_all_trade_sizes(percent,points)
 
        template = loader.get_template('pfx/members.html')
        members = Member.objects.all()
