@@ -41,13 +41,13 @@ def bootstrap_data():
     #u3 = User.objects.create_user('nigel.ratcliffe@ensoft.co.uk','nigel.ratcliffe@ensoft.co.uk','jellyfish')
     #u4 = User.objects.create_user('seancurran78@googlemail.com','seancurran78@googlemail.com','jellyfish')
     #u5 = User.objects.create_user('crowecameron@hotmail.com','crowecameron@hotmail.com','jellyfish')
-    #u6 = User.objects.create_user('aronrollin@hotmail.com','aronrollin@hotmail.com','jellyfish')
+
     #u1.save()
     #u2.save()
     #u3.save()
     #u4.save()
     #u5.save()
-    #u6.save()
+
     u1 = User.objects.get(email='phil.marsden@softwire.com')
     u2 = User.objects.get(email = 'john.cooper@ensoft.co.uk')
     u3 = User.objects.get(email = 'dan.shavick@softwire.com')
@@ -207,6 +207,8 @@ m5.current_fun_fund = 0.01
 m6.current_fun_fund = 0.01
 
 # Add AAron
+u7 = User.objects.create_user('aronrollin@hotmail.com','aronrollin@hotmail.com','jellyfish')
+u7.save()
 u7 = User.objects.get(email='aronrollin@hotmail.com')
 m7 = Member(user=u7, manual_trade_size=10, current_commission=0.05, current_fun_fund=0.01)
 m7.save()
@@ -221,6 +223,13 @@ m1 = Member.objects.get(user=u1)
 m1.current_commission = 0
 m1.current_fun_fund = 0
 igpls = import_csv(csv_filepathname + '4.csv')
+member_list = [m1]
+for igpl in igpls:
+    for m1 in member_list:
+        igpl.AddIndividualPL(m1,member_list)
+
+# May/June EUR/ISD
+igpls = import_csv(csv_filepathname + '5.csv')
 member_list = [m1]
 for igpl in igpls:
     for m1 in member_list:
