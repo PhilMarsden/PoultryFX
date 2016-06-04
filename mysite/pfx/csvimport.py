@@ -68,7 +68,7 @@ def bootstrap_data():
     m6 = Member(user = u6,manual_trade_size = 10,current_commission = 0.05, current_fun_fund = 0.01)
     m6.save()
 
-    Member.set_all_trade_sizes()
+    Member.set_all_trade_sizes(10,300)
 
     #m1 = Member.objects.get(user = u1)
     #m2 = Member.objects.get(user = u2)
@@ -154,7 +154,7 @@ u1 = User.objects.get(email='dan.shavick@softwire.com')
 m1 = Member.objects.get(user=u1)
 m1.manual_trade_size = 20
 m1.save()
-m1.set_calculated_trade_size()
+m1.set_calculated_trade_size(10,300)
 
 #Phil automatic trade size
 
@@ -162,7 +162,7 @@ member_list = Member.objects.all()
 for m1 in member_list:
     m1.automatic_trade_size = True
     m1.save()
-    m1.set_calculated_trade_size()
+    m1.set_calculated_trade_size(10,300)
 
 igpls = import_csv(csv_filepathname + '2.csv')
 for igpl in igpls:
@@ -215,7 +215,7 @@ m7.save()
 date7 = datetime.datetime(2016, 5, 24)
 ic7 = IndividualCash(member=m7, size=3000, transaction_date=date7)
 ic7.save()
-m7.set_calculated_trade_size()
+m7.set_calculated_trade_size(10,300)
 
 # FTSE bet loss
 u1 = User.objects.get(email='phil.marsden@softwire.com')
