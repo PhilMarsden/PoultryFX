@@ -137,8 +137,12 @@
             <td>{{ act.ig_act_size  }}</td>
             <td>
                 {% if act.trade_needed %}
-                    <a href="{{ act.add_trade_url }}" >
-                        Add Trade
+                    <a href="{{ act.add_trade_all_url }}" >
+                        All
+                    </a>
+                    &nbsp;
+                    <a href="{{ act.add_trade_phil_url }}" >
+                        Phil
                     </a>
                 {% endif %}
             </td>

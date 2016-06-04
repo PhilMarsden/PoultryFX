@@ -112,6 +112,16 @@ def ig_activities(request):
        else:
             logger.debug('Adding trade for deal id {}'.format(deal_id_to_add))
             l_igpl = act.add_trade(True)
+   if 'dealid_phil' in request.GET:
+       deal_id_to_add = request.GET['dealid_phil']
+       logger.debug('Deal id {} to be added as trade for Phil'.format(deal_id_to_add))
+       act = ig_activity.get_act(deal_id_to_add)
+       if (act == None):
+           logger.debug('Cannot find deal id {}'.format(deal_id_to_add))
+       else:
+           logger.debug('Adding trade for deal id {}'.format(deal_id_to_add))
+           l_igpl = act.add_trade(False)
+           l_igpl.AddPhilIndividualPL()
    template = loader.get_template('pfx/ig_view.html')
    activities = ig_rest.get_activity(include_all=False)
    context = {'activities':activities, 'show_activities':True, 'show_positions':False, 'show_trades':False }

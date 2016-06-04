@@ -323,9 +323,14 @@ class ig_activity:
             igpl.AddAllIndividualPL()
         return igpl
     @property
-    def add_trade_url(self):
+    def add_trade_all_url(self):
         ret_url = "?dealid=" + self.ig_act_dealid
-        logger.debug('URL for adding trade = {}'.format(ret_url))
+        logger.debug('URL for adding trade all = {}'.format(ret_url))
+        return ret_url
+
+    def add_trade_phil_url(self):
+        ret_url = "?dealid_phil=" + self.ig_act_dealid
+        logger.debug('URL for adding trade phil = {}'.format(ret_url))
         return ret_url
 
     #

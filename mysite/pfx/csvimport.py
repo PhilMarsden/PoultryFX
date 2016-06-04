@@ -207,8 +207,8 @@ m5.current_fun_fund = 0.01
 m6.current_fun_fund = 0.01
 
 # Add AAron
-u7 = User.objects.create_user('aronrollin@hotmail.com','aronrollin@hotmail.com','jellyfish')
-u7.save()
+#u7 = User.objects.create_user('aronrollin@hotmail.com','aronrollin@hotmail.com','jellyfish')
+#u7.save()
 u7 = User.objects.get(email='aronrollin@hotmail.com')
 m7 = Member(user=u7, manual_trade_size=10, current_commission=0.05, current_fun_fund=0.01)
 m7.save()
