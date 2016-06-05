@@ -160,7 +160,7 @@ def members(request):
                   'total_deductions':total_commission() + total_fun_fund(),
                   'total_commission':-total_commission(),
                   'total_net_profit':total_net_profit(),
-                  'total_balance':total_cash() + total_gross_profit() + total_commission() + total_fun_fund(),
+                  'total_balance':total_cash() + total_gross_profit() + total_fun_fund(),
                   'total_return':100 * (total_return()),
                   'total_ig_balance':total_cash() + total_gross_profit()}
 

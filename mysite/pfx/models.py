@@ -120,7 +120,8 @@ class Member(models.Model):
 
     @property
     def return_percentage(self):
-        return (100 * self.net_profit / (self.cash_deposit + self.net_profit))
+        increase = self.net_profit + self.commission_received_pounds
+        return 100 * increase / (self.cash_deposit + increase)
 
     @property
     def cash_deposit(self):
@@ -140,6 +141,10 @@ class Member(models.Model):
         return (tprofit + self.deductions)
 
     @property
+    def commission_received_pounds(self):
+        return self.commission_received * total_commission() * -1.0
+
+    @property
     def deductions(self):
          tcomm = IndividualPL.objects.filter(member_id=self.id).aggregate(Sum('commission')).get('commission__sum', 0.00)
          if tcomm == None:
@@ -152,7 +157,7 @@ class Member(models.Model):
 
     @property
     def balance(self):
-        return self.cash_deposit + self.net_profit
+        return self.cash_deposit + self.net_profit + self.commission_received_pounds
 
     def __str__(self):
         return '%s' % (self.user.email)

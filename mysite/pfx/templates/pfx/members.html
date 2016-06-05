@@ -48,8 +48,9 @@
           <th>Gross Profit</th>
           <th>Deductions</th>
           <th>Net Profit</th>
-          <th>Return</th>
+          <th>Received Commission</th>
           <th>Balance</th>
+          <th>Return</th>
         </tr>
        </thead>
        <tbody>
@@ -61,8 +62,9 @@
             <td>£{{ member.gross_profit |floatformat:2|intcomma}}</td>
             <td>£{{ member.deductions |floatformat:2|intcomma}}</td>
             <td>£{{ member.net_profit |floatformat:2|intcomma}}</td>
-            <td>{{ member.return_percentage |floatformat:2|intcomma}}%</td>
+            <td>£{{ member.commission_received_pounds |floatformat:2|intcomma}}</td>
             <td>£{{ member.balance |floatformat:2|intcomma}}</td>
+            <td>{{ member.return_percentage |floatformat:2|intcomma}}%</td>
         </tr>
         {% endfor %}
         <tr>
@@ -72,8 +74,9 @@
             <td>£{{ total_gross_profit |floatformat:2|intcomma}}</td>
             <td>£{{ total_deductions |floatformat:2|intcomma}}</td>
             <td>£{{ total_net_profit |floatformat:2|intcomma}}</td>
-            <td>{{ total_return |floatformat:2|intcomma}}%</td>
+            <td>£{{ total_commission |floatformat:2|intcomma}}</td>
             <td>£{{ total_balance |floatformat:2|intcomma}}</td>
+            <td>{{ total_return |floatformat:2|intcomma}}%</td>
         </tr>
        </tbody>
      </table>
