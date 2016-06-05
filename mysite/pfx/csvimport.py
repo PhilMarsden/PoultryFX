@@ -254,7 +254,12 @@ m1 = Member.objects.get(user=u1)
 m1.commission_received = 1.0
 m1.save()
 
-#Member.set_all_trade_sizes(10,30)
+#6th June 2016 - Nigel add more money
+m1 = Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.co.uk'))
+date1 = datetime.datetime(2016, 6, 6)
+ic1 = IndividualCash(member=m1, size=4500, transaction_date=date1)
+ic1.save()
+Member.set_all_trade_sizes(10,30)
 
 
 
