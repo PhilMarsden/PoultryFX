@@ -254,7 +254,7 @@ m1 = Member.objects.get(user=u1)
 m1.commission_received = 1.0
 m1.save()
 
-Member.set_all_trade_sizes(10,30)
+#Member.set_all_trade_sizes(10,30)
 
 
 
