@@ -90,6 +90,7 @@ class Member(models.Model):
     current_commission = models.FloatField()
     current_fun_fund =  models.FloatField()
     automatic_trade_size = models.BooleanField(default=False)
+    commission_received = models.FloatField(default = 0.0)
 
     @staticmethod
     def set_all_trade_sizes(percent,points):
