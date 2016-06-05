@@ -98,6 +98,11 @@ class Member(models.Model):
         for m1 in member_list:
             m1.set_calculated_trade_size(percent,points)
 
+    @staticmethod
+    def set_all_trade_sizes_old():
+        member_list = Member.objects.all()
+        for m1 in member_list:
+            m1.set_calculated_trade_size_old()
 
     @property
     def name(self):
@@ -108,6 +113,13 @@ class Member(models.Model):
             risk_per_trade = self.balance * percent / 100
             pounds_per_point = risk_per_trade / points
             self.calculated_trade_size = round((pounds_per_point - 0.5),0)
+        else:
+            self.calculated_trade_size = self.manual_trade_size
+        self.save()
+
+    def set_calculated_trade_size_old(self):
+        if (self.automatic_trade_size):
+            self.calculated_trade_size = round((self.balance - 150.0) /300, 0)
         else:
             self.calculated_trade_size = self.manual_trade_size
         self.save()

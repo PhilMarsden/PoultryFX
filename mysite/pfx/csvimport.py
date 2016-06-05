@@ -154,19 +154,22 @@ u1 = User.objects.get(email='dan.shavick@softwire.com')
 m1 = Member.objects.get(user=u1)
 m1.manual_trade_size = 20
 m1.save()
-m1.set_calculated_trade_size(10,300)
+m1.set_calculated_trade_size_old()
 
-#Phil automatic trade size
+# Phil automatic trade size in time for May 19th - total = 100
 
 member_list = Member.objects.all()
 for m1 in member_list:
     m1.automatic_trade_size = True
     m1.save()
-    m1.set_calculated_trade_size(10,300)
+
+Member.set_all_trade_sizes_old()
 
 igpls = import_csv(csv_filepathname + '2.csv')
 for igpl in igpls:
     igpl.AddAllIndividualPL()
+
+#exit()
 
 # Meat Liquor Trades
 u1 = User.objects.get(email='phil.marsden@softwire.com')
@@ -215,7 +218,7 @@ m7.save()
 date7 = datetime.datetime(2016, 5, 24)
 ic7 = IndividualCash(member=m7, size=3000, transaction_date=date7)
 ic7.save()
-m7.set_calculated_trade_size(10,300)
+Member.set_all_trade_sizes(10,30)
 
 # FTSE bet loss
 u1 = User.objects.get(email='phil.marsden@softwire.com')
@@ -228,9 +231,30 @@ for igpl in igpls:
     for m1 in member_list:
         igpl.AddIndividualPL(m1,member_list)
 
+
+Member.set_all_trade_sizes(10,30)
+
 # May/June EUR/ISD
 igpls = import_csv(csv_filepathname + '5.csv')
 member_list = [m1]
 for igpl in igpls:
     for m1 in member_list:
         igpl.AddIndividualPL(m1,member_list)
+
+# June GBP/USD
+igpls = import_csv(csv_filepathname + '6.csv')
+member_list = Member.objects.all()
+for igpl in igpls:
+    for m1 in member_list:
+        igpl.AddIndividualPL(m1,member_list)
+
+# Add commision to balance when working out balance (ued for trade size)
+u1 = User.objects.get(email='phil.marsden@softwire.com')
+m1 = Member.objects.get(user=u1)
+m1.commission_received = 1.0
+m1.save()
+
+Member.set_all_trade_sizes(10,30)
+
+
+
