@@ -248,6 +248,16 @@ for igpl in igpls:
     for m1 in member_list:
         igpl.AddIndividualPL(m1,member_list)
 
+u1 = User.objects.get(email='phil.marsden@softwire.com')
+m1 = Member.objects.get(user=u1)
+m1.current_commission = 0
+m1.current_fun_fund = 0
+igpls = import_csv(csv_filepathname + '7.csv')
+member_list = [m1]
+for igpl in igpls:
+    for m1 in member_list:
+        igpl.AddIndividualPL(m1, member_list)
+
 # Add commision to balance when working out balance (ued for trade size)
 u1 = User.objects.get(email='phil.marsden@softwire.com')
 m1 = Member.objects.get(user=u1)
