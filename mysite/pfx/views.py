@@ -95,6 +95,7 @@ def ig_positions(request):
    template = loader.get_template('pfx/ig_view.html')
    positions = ig_rest.get_positions()
    context = {'positions':positions, 'show_positions':True, 'show_trades':False, 'show_activities':False }
+   context['autorefresh'] = True
    return HttpResponse(template.render(context, request))
 
 @login_required
