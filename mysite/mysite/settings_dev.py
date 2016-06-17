@@ -53,6 +53,11 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
+        'csvimport': {
+            'handlers': ['debugfile','infofile','warningfile','console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
         'py': {
             'handlers': ['debugfile','infofile','warningfile'],
             'level': 'DEBUG',

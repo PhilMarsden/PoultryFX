@@ -1,6 +1,12 @@
 from socket import gethostname
 import os,django,csv,codecs,sys,datetime
 
+import logging
+logger = logging.getLogger("csvimport")
+print("enable logging csvimport")
+logger.info('CSVIMPORT Logger Initialised')
+
+
 my_hostname = gethostname()
 if (my_hostname == 'pm-django.zoo.lan'):
     DEBUG = False
@@ -26,8 +32,25 @@ django.setup()
 
 from django.contrib.auth.models import User
 from pfx import models
-from pfx.models import Member, IGPL, IndividualPL, IndividualCash, total_calculated_trade_size
+from pfx.models import Member, IGPL, IndividualPL, IndividualCash, total_calculated_trade_size,total_gross_profit
 
+def trades_for_phil(file_suffix):
+    u1 = User.objects.get(email='phil.marsden@softwire.com')
+    m1 = Member.objects.get(user=u1)
+    m1.current_commission = 0
+    m1.current_fun_fund = 0
+    igpls = import_csv(csv_filepathname + file_suffix)
+    member_list = [m1]
+    for igpl in igpls:
+        for m1 in member_list:
+            igpl.AddIndividualPL(m1, member_list)
+
+def trades_for_all(file_suffix):
+    igpls = import_csv(csv_filepathname + file_suffix)
+    member_list = Member.objects.all()
+    for igpl in igpls:
+        for m1 in member_list:
+            igpl.AddIndividualPL(m1, member_list)
 
 def bootstrap_data():
     from pfx.models import Member,IGPL,IndividualPL,IndividualCash
@@ -108,7 +131,7 @@ def import_csv(csv_filename):
     igpls = []
     for row in reader:
         if start_import:
-            print(row)
+            logger.info(row)
             igpl = models.IGPL()
             igpl.closing_ref = row[0]
             igpl.closed_date = datetime.datetime.strptime(row[1], "%d/%m/%y").strftime("%Y-%m-%d")
@@ -135,7 +158,7 @@ def import_csv(csv_filename):
             igpl.net_profit = float(row[19])
             igpl.save()
             igpls.append(igpl)
-            print("Imported",row[0])
+            logger.info("Imported " + row[0])
 
         try:
             if row[0] == 'Closing Ref':
@@ -145,9 +168,20 @@ def import_csv(csv_filename):
     return igpls
 
 bootstrap_data()
+f = open('tmp.txt', 'w')
+f.write("#trades1.csv\n")
+f.close()
+
 igpls = import_csv(csv_filepathname + '1.csv')
 for igpl in igpls:
     igpl.AddAllIndividualPL()
+
+assert (Member.objects.get(user=User.objects.get(email='phil.marsden@softwire.com')).calculated_trade_size == 10.0)
+assert (Member.objects.get(user=User.objects.get(email='john.cooper@ensoft.co.uk')).calculated_trade_size == 20.0)
+assert (Member.objects.get(user=User.objects.get(email='dan.shavick@softwire.com')).calculated_trade_size == 10.0)
+assert (Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.co.uk')).calculated_trade_size == 20.0)
+assert (Member.objects.get(user=User.objects.get(email='seancurran78@googlemail.com')).calculated_trade_size == 10.0)
+assert (Member.objects.get(user=User.objects.get(email='crowecameron@hotmail.com')).calculated_trade_size == 10.0)
 
 #Dan Add more money and make trade size 20
 u1 = User.objects.get(email='dan.shavick@softwire.com')
@@ -165,9 +199,20 @@ for m1 in member_list:
 
 Member.set_all_trade_sizes_old()
 
+f = open('tmp.txt', 'a')
+f.write("#trades2.csv\n")
+f.close()
+
 igpls = import_csv(csv_filepathname + '2.csv')
 for igpl in igpls:
     igpl.AddAllIndividualPL()
+
+assert (Member.objects.get(user=User.objects.get(email='phil.marsden@softwire.com')).calculated_trade_size == 12.0)
+assert (Member.objects.get(user=User.objects.get(email='john.cooper@ensoft.co.uk')).calculated_trade_size == 23.0)
+assert (Member.objects.get(user=User.objects.get(email='dan.shavick@softwire.com')).calculated_trade_size == 20.0)
+assert (Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.co.uk')).calculated_trade_size == 23.0)
+assert (Member.objects.get(user=User.objects.get(email='seancurran78@googlemail.com')).calculated_trade_size == 11.0)
+assert (Member.objects.get(user=User.objects.get(email='crowecameron@hotmail.com')).calculated_trade_size == 11.0)
 
 #exit()
 
@@ -193,6 +238,10 @@ m1.current_fun_fund = 0
 m3.current_fun_fund= 0
 m5.current_fun_fund = 0
 m6.current_fun_fund = 0
+
+f = open('tmp.txt', 'a')
+f.write("#trades3.csv\n")
+f.close()
 
 igpls = import_csv(csv_filepathname + '3.csv')
 member_list = [m1,m3,m5,m6]
@@ -221,44 +270,28 @@ ic7.save()
 Member.set_all_trade_sizes(10,30)
 
 # FTSE bet loss
-u1 = User.objects.get(email='phil.marsden@softwire.com')
-m1 = Member.objects.get(user=u1)
-m1.current_commission = 0
-m1.current_fun_fund = 0
-igpls = import_csv(csv_filepathname + '4.csv')
-member_list = [m1]
-for igpl in igpls:
-    for m1 in member_list:
-        igpl.AddIndividualPL(m1,member_list)
-
+trades_for_phil('4.csv')
+trades_for_phil('5.csv')
 
 Member.set_all_trade_sizes(10,30)
 
-# May/June EUR/ISD
-igpls = import_csv(csv_filepathname + '5.csv')
-member_list = [m1]
-for igpl in igpls:
-    for m1 in member_list:
-        igpl.AddIndividualPL(m1,member_list)
+f = open('tmp.txt', 'a')
+f.write("#trades6.csv\n")
+f.close()
 
-# June GBP/USD
-igpls = import_csv(csv_filepathname + '6.csv')
-member_list = Member.objects.all()
-for igpl in igpls:
-    for m1 in member_list:
-        igpl.AddIndividualPL(m1,member_list)
+# May/June EUR/USD
+trades_for_all('6.csv')
+assert (Member.objects.get(user=User.objects.get(email='phil.marsden@softwire.com')).calculated_trade_size == 12.0)
+assert (Member.objects.get(user=User.objects.get(email='john.cooper@ensoft.co.uk')).calculated_trade_size == 25.0)
+assert (Member.objects.get(user=User.objects.get(email='dan.shavick@softwire.com')).calculated_trade_size == 21.0)
+assert (Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.co.uk')).calculated_trade_size == 25.0)
+assert (Member.objects.get(user=User.objects.get(email='seancurran78@googlemail.com')).calculated_trade_size == 12.0)
+assert (Member.objects.get(user=User.objects.get(email='crowecameron@hotmail.com')).calculated_trade_size == 12.0)
+assert (Member.objects.get(user=User.objects.get(email='aronrollin@hotmail.com')).calculated_trade_size == 10.0)
 
-u1 = User.objects.get(email='phil.marsden@softwire.com')
-m1 = Member.objects.get(user=u1)
-m1.current_commission = 0
-m1.current_fun_fund = 0
-igpls = import_csv(csv_filepathname + '7.csv')
-member_list = [m1]
-for igpl in igpls:
-    for m1 in member_list:
-        igpl.AddIndividualPL(m1, member_list)
+trades_for_phil('7.csv')
 
-# Add commision to balance when working out balance (ued for trade size)
+# Add commision to balance when working out balance (used for trade size)
 u1 = User.objects.get(email='phil.marsden@softwire.com')
 m1 = Member.objects.get(user=u1)
 m1.commission_received = 1.0
@@ -269,7 +302,32 @@ m1 = Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.co.u
 date1 = datetime.datetime(2016, 6, 6)
 ic1 = IndividualCash(member=m1, size=4500, transaction_date=date1)
 ic1.save()
+
+#Margin changes
 Member.set_all_trade_sizes(10,30)
 
+assert (total_gross_profit() == 8869.45)
 
+f = open('tmp.txt', 'a')
+f.write("#trades8.csv\n")
+f.close()
+
+trades_for_all('8.csv')
+
+assert (Member.objects.get(user=User.objects.get(email='phil.marsden@softwire.com')).calculated_trade_size == 14.0)
+assert (Member.objects.get(user=User.objects.get(email='john.cooper@ensoft.co.uk')).calculated_trade_size == 26.0)
+assert (Member.objects.get(user=User.objects.get(email='dan.shavick@softwire.com')).calculated_trade_size == 23.0)
+assert (Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.co.uk')).calculated_trade_size == 41.0)
+assert (Member.objects.get(user=User.objects.get(email='seancurran78@googlemail.com')).calculated_trade_size == 13.0)
+assert (Member.objects.get(user=User.objects.get(email='crowecameron@hotmail.com')).calculated_trade_size == 13.0)
+assert (Member.objects.get(user=User.objects.get(email='aronrollin@hotmail.com')).calculated_trade_size == 10.0)
+
+trades_for_phil('9.csv')
+assert (round(Member.objects.get(user = User.objects.get(email='phil.marsden@softwire.com')).balance,2) == 4533.22)
+assert (round(Member.objects.get(user = User.objects.get(email='john.cooper@ensoft.co.uk')).balance,2) == 8331.6)
+assert (round(Member.objects.get(user = User.objects.get(email='dan.shavick@softwire.com')).balance,2) == 7156.13)
+assert (round(Member.objects.get(user = User.objects.get(email='nigel.ratcliffe@ensoft.co.uk')).balance,2) == 12989.52)
+assert (round(Member.objects.get(user = User.objects.get(email='seancurran78@googlemail.com')).balance,2) == 4156.62)
+assert (round(Member.objects.get(user = User.objects.get(email='crowecameron@hotmail.com')).balance,2) == 4156.62)
+assert (round(Member.objects.get(user = User.objects.get(email='aronrollin@hotmail.com')).balance,2) == 3326.18)
 

@@ -3,9 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.contrib.humanize.templatetags.humanize import intcomma
 
-import logging
-
 # Get an instance of a logger
+import logging
 logger = logging.getLogger(__name__)
 print("enable logging " + __name__)
 logger.info('Models Initialised')
@@ -169,7 +168,8 @@ class Member(models.Model):
 
     @property
     def balance(self):
-        return self.cash_deposit + self.net_profit + self.commission_received_pounds
+        b = self.cash_deposit + self.net_profit + self.commission_received_pounds
+        return b
 
     def __str__(self):
         return '%s' % (self.user.email)
@@ -189,9 +189,16 @@ class IndividualPL(models.Model):
         ipl1.profit = igpl1.net_profit * m1.percentage_of_trades(all_members)
         ipl1.fun_fund = - max(ipl1.profit * m1.current_fun_fund,0.0)
         ipl1.commission = - max(ipl1.profit * m1.current_commission,0.0)
-        logger.info('Commision {} from member {} based on Profit:{} Commission:{}'.format(ipl1.commission, ipl1.member,
-                                                                                          ipl1.profit,
-                                                                                          ipl1.member.current_commission))
+        logger.info('Member {} trade of size {} with commission {} based on Profit:{} Commission:{}'.format(
+                                                                                        ipl1.member,
+                                                                                        ipl1.size,
+                                                                                        ipl1.commission,
+                                                                                        ipl1.profit,
+                                                                                        ipl1.member.current_commission))
+
+        #f = open('tmp.txt', 'a')
+        #f.write("assert (Member.objects.get(user=User.objects.get(email='{}')).calculated_trade_size == {})\n".format(ipl1.member,ipl1.size))
+        #f.close()
 
         ipl1.save()
 
