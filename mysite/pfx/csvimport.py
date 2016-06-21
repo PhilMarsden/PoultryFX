@@ -333,3 +333,7 @@ assert (round(Member.objects.get(user = User.objects.get(email='aronrollin@hotma
 
 Member.set_all_trade_sizes(5,30)
 # Total = 74
+
+trades_for_phil('10.csv')
+assert (total_gross_profit() == 10782.8)
+
