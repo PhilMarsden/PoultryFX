@@ -153,7 +153,7 @@ class ig_rest:
                 "Version": 1
             }
 
-            num_hours = 24 * 90
+            num_hours = 24 * 1
             time_period = 1000 * 60 * 60 * num_hours
 
             logger.debug('time in milliseconds = {}'.format(time_period))
@@ -271,6 +271,9 @@ class ig_activity:
             self.ig_act_url = ig_instrument_urls[self.ig_act_marketName]
         else:
             self.ig_act_url = ""
+
+        logger.debug('Level for {} = {}'.format(self.ig_act_marketName, self.ig_act_level))
+        logger.debug('Size for {} = {}'.format(self.ig_act_marketName, self.ig_act_size))
         logger.debug('URL for {} = {}'.format(self.ig_act_marketName, self.ig_act_url))
 
     @staticmethod
@@ -299,17 +302,22 @@ class ig_activity:
         igpl.market = self.ig_act_marketName
         igpl.period = "DFB"
         if (self.ig_act_size < 0):
+            logger.debug('AddTrade : BUY {}'.format(self.ig_act_size))
             igpl.direction = "BUY"
         else:
+            logger.debug('AddTrade : SELL {}'.format(self.ig_act_size))
             igpl.direction = "SELL"
         igpl.size = abs(self.ig_act_size)
         igpl.opening_price = matching_act.ig_act_level
+        logger.debug('AddTrade : Open Price = {}'.format(igpl.opening_price))
         igpl.closing_price = self.ig_act_level
+        logger.debug('AddTrade : Open Price = {}'.format(igpl.closing_price))
         igpl.trade_ccy = "GBP"
         if (igpl.direction == "BUY"):
             igpl.gross_profit = igpl.size * (igpl.closing_price - igpl.opening_price)
         else:
             igpl.gross_profit = igpl.size * (igpl.opening_price - igpl.closing_price)
+        logger.debug('AddTrade : Gross Profit = {}'.format(igpl.gross_profit))
         igpl.funding = 0
         igpl.borrowing = 0
         igpl.dividends = 0
