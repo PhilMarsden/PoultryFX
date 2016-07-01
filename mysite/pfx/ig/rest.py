@@ -166,7 +166,7 @@ class ig_rest:
             elif (resp.status_code == 200):
                 logger.info("200 return code, all good")
                 json_data = json.loads(resp.text)
-                #logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
+                logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
                 for act_i in json_data["activities"]:
                     if (act_i["activity"] == "Order") or include_all:
                         activity = ig_activity(act_i)
