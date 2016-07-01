@@ -132,7 +132,7 @@ class Member(models.Model):
     @property
     def return_percentage(self):
         increase = self.net_profit + self.commission_received_pounds
-        return 100 * increase / (self.cash_deposit + increase)
+        return 100 * increase / (self.cash_deposit)
 
     @property
     def cash_deposit(self):

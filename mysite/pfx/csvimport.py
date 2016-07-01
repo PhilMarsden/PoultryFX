@@ -339,5 +339,9 @@ trades_for_phil('11.csv')
 #assert (total_gross_profit() == 10931.98)
 
 Member.set_all_trade_sizes(10,30)
-# Total = 74
+# Total = 145
+
+# Jul 1st Trades
+trades_for_all('11.csv')
+
 
