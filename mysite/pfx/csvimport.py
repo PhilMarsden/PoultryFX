@@ -336,12 +336,15 @@ assert (total_gross_profit() == 10931.98)
 
 # 30 Jun onwards
 trades_for_phil('11.csv')
-#assert (total_gross_profit() == 10931.98)
 
 Member.set_all_trade_sizes(10,30)
 # Total = 145
 
 # Jul 1st Trades
-trades_for_all('11.csv')
+trades_for_all('12.csv')
+assert (total_gross_profit() == 17216.33)
+
+Member.set_all_trade_sizes(10,30)
+# Total = 166
 
 
