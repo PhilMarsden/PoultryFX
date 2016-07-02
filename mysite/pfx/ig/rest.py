@@ -24,6 +24,7 @@ ig_instrument_urls = {
     'EUR/USD': 'http://www.ig.com/uk/ig-forex/eur-usd',
     'Tesla Motors Inc (All Sessions)': 'http://www.ig.com/uk/ig-shares/tesla-motors-TSLA-US',
 }
+ig_datetime_format = '%Y-%m-%dT%H:%M:%S'
 
 class ig_rest:
     @staticmethod
@@ -150,15 +151,20 @@ class ig_rest:
                 "X-IG-API-KEY": ig_apikey,
                 "X-SECURITY-TOKEN": ig_securitytoken,
                 "CST": ig_cst,
-                "Version": 1
+                "Version": 3
             }
 
-            num_hours = 24 * 1
-            time_period = 1000 * 60 * 60 * num_hours
+            now = datetime.now()
 
-            logger.debug('time in milliseconds = {}'.format(time_period))
+            later = now - timedelta(days = 3)
 
-            resp = requests.get(ig_url + 'history/activity/' + str(time_period), headers=req_headers)
+            later_formatted = later.strftime(ig_datetime_format)
+
+            logger.debug('formatted time = {}'.format(later_formatted))
+            requrl = ig_url + 'history/activity?detailed=true&from=' + str(later_formatted)
+            logger.debug('URL = {}'.format(requrl))
+
+            resp = requests.get(requrl, headers=req_headers)
             if (resp.status_code == 401):
                 logger.warning("401 return code, try logging in again")
                 ig_cst = None
@@ -168,11 +174,12 @@ class ig_rest:
                 json_data = json.loads(resp.text)
                 logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
                 for act_i in json_data["activities"]:
-                    if (act_i["activity"] == "Order") or include_all:
+                    if (act_i["type"] == "POSITION") or include_all:
                         activity = ig_activity(act_i)
                         ig_activities.append(activity)
             else:
                 logger.error('** Failed to get activities : {}'.format(str(resp.status_code)))
+
             ig_activities_datetime = datetime.now()
         else:
             logger.info('Take activity from cache')
@@ -258,15 +265,15 @@ class ig_activity:
 
     def __init__(self,json_position):
         global ig_instrument_urls
-        self.ig_act_activity = json_position['activity']
-        self.ig_act_result = json_position['result']
-        self.ig_act_limit = json_position['limit']
-        self.ig_act_marketName = json_position['marketName']
-        self.ig_act_stop = json_position['stop']
-        self.ig_act_level = float(json_position['level'])
-        self.ig_act_size = float(json_position['size'])
+        self.ig_act_marketName = json_position['details']['marketName']
+        #self.ig_act_activity = json_position['activity']
+        self.ig_act_result = json_position['description']
+        self.ig_act_limit = json_position['details']['limitLevel']
+        self.ig_act_stop = json_position['details']['stopLevel']
+        self.ig_act_level = float(json_position['details']['level'])
+        self.ig_act_size = float(json_position['details']['size'])
         self.ig_act_dealid = json_position['dealId']
-        self.ig_act_datetime = json_position['date'] + json_position['time']
+        self.ig_act_datetime = json_position['date']
         if self.ig_act_marketName in ig_instrument_urls:
             self.ig_act_url = ig_instrument_urls[self.ig_act_marketName]
         else:
@@ -296,9 +303,9 @@ class ig_activity:
         matching_act = self.open_activity
         igpl = IGPL()
         igpl.closing_ref = self.ig_act_dealid[-8:]
-        igpl.closed_date = datetime.strptime(self.ig_act_datetime, "%d/%m/%y%H:%M").strftime("%Y-%m-%d")
+        igpl.closed_date = datetime.strptime(self.ig_act_datetime, ig_datetime_format).strftime("%Y-%m-%d")
         igpl.opening_ref = matching_act.ig_act_dealid[-8:]
-        igpl.opening_date = datetime.strptime(matching_act.ig_act_datetime, "%d/%m/%y%H:%M").strftime("%Y-%m-%d")
+        igpl.opening_date = datetime.strptime(matching_act.ig_act_datetime, ig_datetime_format).strftime("%Y-%m-%d")
         igpl.market = self.ig_act_marketName
         igpl.period = "DFB"
         if (self.ig_act_size < 0):
