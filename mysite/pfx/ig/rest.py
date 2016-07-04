@@ -262,6 +262,7 @@ class ig_activity:
     ig_act_dealid = None
     ig_act_datetime = None
     ig_act_url = None
+    ig_act_direction = None
 
     def __init__(self,json_position):
         global ig_instrument_urls
@@ -272,6 +273,7 @@ class ig_activity:
         self.ig_act_stop = json_position['details']['stopLevel']
         self.ig_act_level = float(json_position['details']['level'])
         self.ig_act_size = float(json_position['details']['size'])
+        self.ig_act_direction = json_position['details']['direction']
         self.ig_act_dealid = json_position['dealId']
         self.ig_act_datetime = json_position['date']
         if self.ig_act_marketName in ig_instrument_urls:
@@ -279,6 +281,7 @@ class ig_activity:
         else:
             self.ig_act_url = ""
 
+        logger.debug('Direction for {} = {}'.format(self.ig_act_marketName, self.ig_act_direction))
         logger.debug('Level for {} = {}'.format(self.ig_act_marketName, self.ig_act_level))
         logger.debug('Size for {} = {}'.format(self.ig_act_marketName, self.ig_act_size))
         logger.debug('URL for {} = {}'.format(self.ig_act_marketName, self.ig_act_url))
@@ -308,7 +311,8 @@ class ig_activity:
         igpl.opening_date = datetime.strptime(matching_act.ig_act_datetime, ig_datetime_format).strftime("%Y-%m-%d")
         igpl.market = self.ig_act_marketName
         igpl.period = "DFB"
-        if (self.ig_act_size < 0):
+        # If closing activity was a SELL then original was a BUY :-)
+        if (self.ig_act_direction == "SELL"):
             logger.debug('AddTrade : BUY {}'.format(self.ig_act_size))
             igpl.direction = "BUY"
         else:
