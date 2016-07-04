@@ -174,7 +174,7 @@ class ig_rest:
                 json_data = json.loads(resp.text)
                 logger.debug('Activity {}'.format(json.dumps(json_data, indent=4)))
                 for act_i in json_data["activities"]:
-                    if (act_i["type"] == "POSITION") or include_all:
+                    if (act_i["type"] == "POSITION") or (act_i["type"] == "EDIT_STOP_LIMIT") or include_all or True:
                         activity = ig_activity(act_i)
                         ig_activities.append(activity)
             else:
@@ -252,7 +252,7 @@ class ig_position:
 
 
 class ig_activity:
-    ig_act_activity = None
+    ig_act_type = None
     ig_act_result = None
     ig_act_limit = None
     ig_act_marketName = None
@@ -267,7 +267,7 @@ class ig_activity:
     def __init__(self,json_position):
         global ig_instrument_urls
         self.ig_act_marketName = json_position['details']['marketName']
-        #self.ig_act_activity = json_position['activity']
+        self.ig_act_type = json_position['type']
         self.ig_act_result = json_position['description']
         self.ig_act_limit = json_position['details']['limitLevel']
         self.ig_act_stop = json_position['details']['stopLevel']
