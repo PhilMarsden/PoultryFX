@@ -52,6 +52,13 @@ def trades_for_all(file_suffix):
         for m1 in member_list:
             igpl.AddIndividualPL(m1, member_list)
 
+def asserts_for_all():
+    member_list = Member.objects.all()
+    f = open('tmp.txt', 'a')
+    for m1 in member_list:
+        f.write("assert (Member.objects.get(user=User.objects.get(email='{}')).balance == {})\n".format(m1,m1.balance))
+    f.close()
+
 def bootstrap_data():
     from pfx.models import Member,IGPL,IndividualPL,IndividualCash
     models.IGPL.objects.all().delete()
@@ -339,10 +346,28 @@ trades_for_phil('11.csv')
 
 Member.set_all_trade_sizes(10,30)
 # Total = 145
+assert (Member.objects.get(user=User.objects.get(email='phil.marsden@softwire.com')).calculated_trade_size == 16.0)
+assert (Member.objects.get(user=User.objects.get(email='john.cooper@ensoft.co.uk')).calculated_trade_size == 27.0)
+assert (Member.objects.get(user=User.objects.get(email='dan.shavick@softwire.com')).calculated_trade_size == 23.0)
+assert (Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.co.uk')).calculated_trade_size == 43.0)
+assert (Member.objects.get(user=User.objects.get(email='seancurran78@googlemail.com')).calculated_trade_size == 13.0)
+assert (Member.objects.get(user=User.objects.get(email='crowecameron@hotmail.com')).calculated_trade_size == 13.0)
+assert (Member.objects.get(user=User.objects.get(email='aronrollin@hotmail.com')).calculated_trade_size == 10.0)
+
+f = open('tmp.txt', 'a')
+f.write("#trades12.csv\n")
+f.close()
 
 # Jul 1st Trades
 trades_for_all('12.csv')
 assert (total_gross_profit() == 17216.33)
+assert (Member.objects.get(user=User.objects.get(email='phil.marsden@softwire.com')).balance == 5926.7775)
+assert (Member.objects.get(user=User.objects.get(email='john.cooper@ensoft.co.uk')).balance == 9446.835)
+assert (Member.objects.get(user=User.objects.get(email='dan.shavick@softwire.com')).balance == 8106.148999999999)
+assert (Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.co.uk')).balance == 14765.635)
+assert (Member.objects.get(user=User.objects.get(email='seancurran78@googlemail.com')).balance == 4693.5830000000005)
+assert (Member.objects.get(user=User.objects.get(email='crowecameron@hotmail.com')).balance == 4693.5830000000005)
+assert (Member.objects.get(user=User.objects.get(email='aronrollin@hotmail.com')).balance == 3739.23)
 
 # Jul 1st - Jul 7th Phil
 trades_for_phil('13.csv')
