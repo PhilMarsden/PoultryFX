@@ -39,11 +39,16 @@ def trades_for_phil(file_suffix):
     m1 = Member.objects.get(user=u1)
     m1.current_commission = 0
     m1.current_fun_fund = 0
+    m1.save
     igpls = import_csv(csv_filepathname + file_suffix)
     member_list = [m1]
     for igpl in igpls:
         for m1 in member_list:
             igpl.AddIndividualPL(m1, member_list)
+    m1.current_commission = 0.05
+    m1.current_fun_fund = 0.01
+    m1.save
+
 
 def trades_for_all(file_suffix):
     igpls = import_csv(csv_filepathname + file_suffix)
@@ -373,7 +378,10 @@ assert (Member.objects.get(user=User.objects.get(email='aronrollin@hotmail.com')
 trades_for_phil('13.csv')
 assert (total_gross_profit() == 17200.93)
 
+trades_for_phil('14.csv')
+assert (total_gross_profit() == 17296.43)
+
 Member.set_all_trade_sizes(10,30)
-# Total = 166
+# Total = 167
 
 
