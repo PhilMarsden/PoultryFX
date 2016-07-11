@@ -70,7 +70,15 @@ class IGPL(models.Model):
         u1 = User.objects.get(email='phil.marsden@softwire.com')
         member_list = Member.objects.filter(user=u1)
         for m1 in member_list:
+            cc = m1.current_commission
+            cf = m1.current_fun_fund
+            m1.current_commission = 0.0
+            m1.current_fun_fund = 0.0
+            m1.save()
             self.AddIndividualPL(m1,member_list)
+            m1.current_commission = cc
+            m1.current_fun_fund = cf
+            m1.save()
 
     def save(self, *args, **kwargs):
         super(IGPL, self).save(*args, **kwargs) # Call the "real" save() method.
