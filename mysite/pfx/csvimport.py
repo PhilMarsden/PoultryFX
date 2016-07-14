@@ -381,7 +381,18 @@ assert (total_gross_profit() == 17200.93)
 trades_for_phil('14.csv')
 assert (total_gross_profit() == 17296.43)
 
+# 8 - 14 July
+u1 = User.objects.get(email='phil.marsden@softwire.com')
+m1 = Member.objects.get(user=u1)
+date1 = datetime.datetime(2016, 7, 11)
+ic1 = IndividualCash(member=m1, size=200, transaction_date=date1)
+ic1.save()
+trades_for_phil('15.csv')
+assert (total_gross_profit() == 17267.83)
+
 Member.set_all_trade_sizes(10,30)
 # Total = 167
+
+
 
 

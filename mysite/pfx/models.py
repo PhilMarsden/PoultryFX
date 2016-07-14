@@ -39,7 +39,7 @@ class TradeEmail(models.Model):
 class IGPL(models.Model):
     closing_ref = models.CharField(max_length=8, unique=True)
     closed_date = models.DateField()
-    opening_ref = models.CharField(max_length=8, unique=True)
+    opening_ref = models.CharField(max_length=8)
     opening_date = models.DateField()
     market = models.CharField(max_length=255)
     period = models.CharField(max_length=8)
