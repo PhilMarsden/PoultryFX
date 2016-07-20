@@ -390,6 +390,11 @@ ic1.save()
 trades_for_phil('15.csv')
 assert (total_gross_profit() == 17267.83)
 
+# 15 - 19 July
+trades_for_phil('16.csv')
+assert (total_gross_profit() == 17042.43)
+
+
 Member.set_all_trade_sizes(10,30)
 # Total = 167
 
