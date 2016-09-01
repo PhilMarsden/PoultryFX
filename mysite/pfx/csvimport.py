@@ -394,10 +394,23 @@ assert (total_gross_profit() == 17267.83)
 trades_for_phil('16.csv')
 assert (total_gross_profit() == 17042.43)
 
+trades_for_phil('17-phil.csv')
 
 Member.set_all_trade_sizes(10,30)
-# Total = 167
+#Total = 166
 
+trades_for_all('17-all.csv')
+Member.set_all_trade_sizes(10,30)
 
+#30 Aug - JC add more money
+m1 = Member.objects.get(user=User.objects.get(email='john.cooper@ensoft.co.uk'))
+date1 = datetime.datetime(2016, 8, 30)
+ic1 = IndividualCash(member=m1, size=10000, transaction_date=date1)
+ic1.save()
 
+Member.set_all_trade_sizes(10,30)
+#Total = 208
 
+trades_for_all('18-all.csv')
+Member.set_all_trade_sizes(10,30)
+assert (total_gross_profit() == 21872.68)
