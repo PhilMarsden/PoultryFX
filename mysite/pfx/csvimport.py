@@ -423,5 +423,14 @@ date1 = datetime.datetime(2016, 9, 1)
 ic1 = IndividualCash(member=m1, size=10000, transaction_date=date1)
 ic1.save()
 
+m1 = Member.objects.get(user=User.objects.get(email='john.cooper@ensoft.co.uk'))
+date1 = datetime.datetime(2016, 9, 1)
+ic1 = IndividualCash(member=m1, size=10000, transaction_date=date1)
+ic1.save()
+
+m1 = Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.co.uk'))
+date1 = datetime.datetime(2016, 9, 1)
+ic1 = IndividualCash(member=m1, size=9500, transaction_date=date1)
+ic1.save()
 Member.set_all_trade_sizes(10,30)
-#Total = 247
+#Total = 278
