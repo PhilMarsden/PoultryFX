@@ -138,6 +138,18 @@ class Member(models.Model):
         return (self.calculated_trade_size / sum_tsize)
 
     @property
+    def perfect_return_percentage(self):
+        trades = IndividualPL.objects.filter(member=self).order_by('igpl__closed_date')
+        l_return = 1.0
+        for t in trades:
+            logger.debug('Trade percentage = {}'.format(t.return_percentage ))
+            l_return = t.return_percentage * l_return
+            logger.debug('Cummulative Return percentage = {}'.format(l_return))
+
+        logger.debug('Return percentage = {}'.format(l_return))
+        return (l_return - 1.0) * 100.0
+
+    @property
     def return_percentage(self):
         increase = self.net_profit + self.commission_received_pounds
         return 100 * increase / (self.cash_deposit)
@@ -189,6 +201,10 @@ class IndividualPL(models.Model):
     profit = models.FloatField(default=0)
     commission = models.FloatField(default=0)
     fun_fund = models.FloatField(default=0)
+
+    @property
+    def return_percentage(self):
+        return (self.net_profit + (self.size * 300)) / (self.size * 300)
 
     @staticmethod
     def AddNewCalculatedEntry(m1, igpl1,all_members):

@@ -90,7 +90,7 @@ class pfx_imap(Thread):
                             logger.info('Saving trade to database with IMAP Message ID : %s' % imap_message_id)
                             trade_email.save()
                             emailToSendBody = '{} Start:{} Stop:{} Target:{} {}'.format(currency_pair, trade_start, trade_stop,trade_target, time_live)
-                            emailToSend = EmailMessage('Trade', emailToSendBody, to=[EMAIL_RECIPIENT])
+                            emailToSend = EmailMessage('Trade ', emailToSendBody, to=[EMAIL_RECIPIENT])
                             logger.info('Sending email about trade with IMAP Message ID : %s' % imap_message_id)
                             emailToSend.send()
 
