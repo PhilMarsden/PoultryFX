@@ -434,3 +434,7 @@ ic1 = IndividualCash(member=m1, size=9500, transaction_date=date1)
 ic1.save()
 Member.set_all_trade_sizes(10,30)
 #Total = 278
+
+trades_for_all('19.csv')
+Member.set_all_trade_sizes(10,30)
+assert (total_gross_profit() == 14812.98)
