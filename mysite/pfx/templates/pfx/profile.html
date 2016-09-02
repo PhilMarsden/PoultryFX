@@ -72,6 +72,7 @@
       <thead>
         <tr>
           <th>Instrument</th>
+          <th>Profit</th>
           <th>Size</th>
           <th>Direction</th>
           <th>Start</th>
@@ -80,7 +81,6 @@
           <th>Max Win</th>
           <th>Min Win</th>
           <th>Price</th>
-          <th>Profit</th>
         </tr>
        </thead>
        <tbody>
@@ -95,6 +95,7 @@
                     </a>
                 {% endif %}
             </td>
+            <td>£{{ position.ig_pos_profit |floatformat:2|intcomma}}</td>
             <td>{{ position.ig_pos_size }}</td>
             <td>{{ position.ig_pos_direction }}</td>
             <td>{{ position.ig_pos_start_level }}</td>
@@ -103,7 +104,6 @@
             <td>{{ position.ig_pos_max_win |floatformat:2|intcomma }}</td>
             <td>{{ position.ig_pos_max_loss |floatformat:2|intcomma}}</td>
             <td>{{ position.ig_pos_price }}</td>
-            <td>£{{ position.ig_pos_profit |floatformat:2|intcomma}}</td>
         </tr>
         {% endfor %}
        </tbody>
