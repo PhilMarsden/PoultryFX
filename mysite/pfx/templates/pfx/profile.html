@@ -12,56 +12,6 @@
 {% endblock %}
 
 {% block body %}
-   <h1 class="page-header">Account Summary</h1>
-
-{% if member %}
-
-{% if user.is_superuser %}
-<a href="/members"> All Members</a>
-{% endif %}
-  <div class="table-responsive">
-    <table class="table table-bordered">
-       <tbody>
-        <tr>
-
-            <td><b>Name</b></td>
-            <td>{{member.name}}</td>
-        </tr>
-        <tr>
-
-            <td><b>Cash Deposit Total</b></td>
-            <td>£{{member.cash_deposit |floatformat:2|intcomma}}</td>
-        </tr>
-        <tr>
-            <td><b>Net Profit</b></td>
-            <td>£{{member.net_profit | floatformat:2|intcomma}}</td>
-        </tr>
-        <tr>
-            <td><b>Balance</b></td>
-            <td>£{{member.balance | floatformat:2|intcomma}}</td>
-        </tr>
-        <tr>
-            <td><b>Return</b></td>
-            <td>{{member.return_percentage | floatformat:2|intcomma}}%</td>
-        </tr>
-        <tr>
-            <td><b>Perfect Return</b></td>
-            <td>{{member.perfect_return_percentage | floatformat:2|intcomma}}%</td>
-        </tr>
-        <tr>
-            <td><b>Total fun fund</b></td>
-            <td>£{{fun_fund | floatformat:2|intcomma}}</td>
-        </tr>
-        <tr>
-            <td><b>Trade size</b></td>
-            <td>£{{member.calculated_trade_size | floatformat:2|intcomma}} per point</td>
-        </tr>
-       </tbody>
-     </table>
-   </div>
-{% else %}
-    <h3 class="page-header">No account information</h3>
-{% endif %}
 
 <h1 class="page-header">Open positions</h1>
 
@@ -113,6 +63,56 @@
     <h3 class="page-header">No open positions</h3>
 {% endif %}
 
+   <h1 class="page-header">Account Summary</h1>
+
+{% if member %}
+
+{% if user.is_superuser %}
+<a href="/members"> All Members</a>
+{% endif %}
+  <div class="table-responsive">
+    <table class="table table-bordered">
+       <tbody>
+        <tr>
+
+            <td><b>Name</b></td>
+            <td>{{member.name}}</td>
+        </tr>
+        <tr>
+
+            <td><b>Cash Deposit Total</b></td>
+            <td>£{{member.cash_deposit |floatformat:2|intcomma}}</td>
+        </tr>
+        <tr>
+            <td><b>Net Profit</b></td>
+            <td>£{{member.net_profit | floatformat:2|intcomma}}</td>
+        </tr>
+        <tr>
+            <td><b>Balance</b></td>
+            <td>£{{member.balance | floatformat:2|intcomma}}</td>
+        </tr>
+        <tr>
+            <td><b>Return</b></td>
+            <td>{{member.return_percentage | floatformat:2|intcomma}}%</td>
+        </tr>
+        <tr>
+            <td><b>Perfect Return</b></td>
+            <td>{{member.perfect_return_percentage | floatformat:2|intcomma}}%</td>
+        </tr>
+        <tr>
+            <td><b>Total fun fund</b></td>
+            <td>£{{fun_fund | floatformat:2|intcomma}}</td>
+        </tr>
+        <tr>
+            <td><b>Trade size</b></td>
+            <td>£{{member.calculated_trade_size | floatformat:2|intcomma}} per point</td>
+        </tr>
+       </tbody>
+     </table>
+   </div>
+{% else %}
+    <h3 class="page-header">No account information</h3>
+{% endif %}
 <h1 class="page-header">Completed Trades</h1>
 
 
