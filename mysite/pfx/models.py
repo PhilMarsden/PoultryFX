@@ -220,11 +220,12 @@ class IndividualPL(models.Model):
                                                                                         ipl1.profit,
                                                                                         ipl1.member.current_commission))
 
-        #f = open('tmp.txt', 'a')
-        #f.write("assert (Member.objects.get(user=User.objects.get(email='{}')).calculated_trade_size == {})\n".format(ipl1.member,ipl1.size))
-        #f.close()
-
         ipl1.save()
+
+        f = open('tmp.txt', 'a')
+        f.write("assert (Member.objects.get(user=User.objects.get(email='{}')).calculated_trade_size == {})\n".format(ipl1.member, round(ipl1.size,0)))
+        f.write("assert (Member.objects.get(user=User.objects.get(email='{}')).balance == {})\n".format(ipl1.member,ipl1.member.balance))
+        f.close()
 
     @property
     def deductions(self):
