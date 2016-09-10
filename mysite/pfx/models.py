@@ -258,9 +258,27 @@ class IndividualCash(models.Model):
         verbose_name = "Individual Cash Entry"
         verbose_name_plural = "Individual Cash Entries"
 
+class FunFundWithdrawl(models.Model):
+    amount = models.FloatField()
+    decription = models.CharField(max_length=255)
+    transaction_date = models.DateTimeField('date published')
+    def __str__(self):
+        return '%s %d' % (self.transaction_date, self.amount)
+    class Meta:
+        verbose_name = "Fun fund withdrawl"
+        verbose_name_plural = "Fun fund withdrawls"
+
 def total_fun_fund():
     tfun = IndividualPL.objects.all().aggregate(Sum('fun_fund')).get('fun_fund__sum',0.00)
-    return 0 if tfun == None else tfun
+    if tfun == None:
+        tfun = 0
+    return tfun
+
+def total_fun_fundw():
+    tfunw = FunFundWithdrawl.objects.all().aggregate(Sum('amount')).get('amount__sum', 0.00)
+    if tfunw == None:
+        tfunw = 0
+    return tfunw
 
 def total_commission():
     tcom = IndividualPL.objects.all().aggregate(Sum('commission')).get('commission__sum',0.00)
