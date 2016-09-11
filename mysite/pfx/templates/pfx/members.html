@@ -50,8 +50,8 @@
           <th>Net Profit</th>
           <th>Received Commission</th>
           <th>Balance</th>
-          <th>Return</th>
-          <th>Perfect Return</th>
+          <th>Actual Return</th>
+          <th>Trades Return</th>
         </tr>
        </thead>
        <tbody>
@@ -65,8 +65,8 @@
             <td>£{{ member.net_profit |floatformat:2|intcomma}}</td>
             <td>£{{ member.commission_received_pounds |floatformat:2|intcomma}}</td>
             <td>£{{ member.balance |floatformat:2|intcomma}}</td>
-            <td>{{ member.return_percentage |floatformat:2|intcomma}}%</td>
-            <td>{{ member.perfect_return_percentage |floatformat:2|intcomma}}%</td>
+            <td>{{ member.actual_return_percentage |floatformat:2|intcomma}}%</td>
+            <td>{{ member.trades_return_percentage |floatformat:2|intcomma}}%</td>
         </tr>
         {% endfor %}
         <tr>

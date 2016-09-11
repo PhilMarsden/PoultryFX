@@ -138,7 +138,7 @@ class Member(models.Model):
         return (self.calculated_trade_size / sum_tsize)
 
     @property
-    def perfect_return_percentage(self):
+    def trades_return_percentage(self):
         trades = IndividualPL.objects.filter(member=self).order_by('igpl__closed_date')
         l_return = 1.0
         for t in trades:
@@ -150,7 +150,7 @@ class Member(models.Model):
         return (l_return - 1.0) * 100.0
 
     @property
-    def return_percentage(self):
+    def actual_return_percentage(self):
         increase = self.net_profit + self.commission_received_pounds
         return 100 * increase / (self.cash_deposit)
 
@@ -201,10 +201,16 @@ class IndividualPL(models.Model):
     profit = models.FloatField(default=0)
     commission = models.FloatField(default=0)
     fun_fund = models.FloatField(default=0)
+    net_return = models.FloatField(default=0)
 
     @property
     def return_percentage(self):
-        return (self.net_profit + (self.size * 300)) / (self.size * 300)
+        #return (self.net_profit + (self.size * 300)) / (self.size * 300)
+        return self.net_return
+
+    @property
+    def return_percentage_display(self):
+        return round((self.net_return - 1.0) * 100,4)
 
     @staticmethod
     def AddNewCalculatedEntry(m1, igpl1,all_members):
@@ -213,10 +219,12 @@ class IndividualPL(models.Model):
         ipl1.profit = igpl1.net_profit * m1.percentage_of_trades(all_members)
         ipl1.fun_fund = - max(ipl1.profit * m1.current_fun_fund,0.0)
         ipl1.commission = - max(ipl1.profit * m1.current_commission,0.0)
-        logger.info('Member {} trade of size {} with commission {} based on Profit:{} Commission:{}'.format(
+        ipl1.net_return = 1.0 + ipl1.net_profit / m1.balance
+        logger.info('Member {} trade of size {} with commission {} net return {} based on Profit:{} Commission:{}'.format(
                                                                                         ipl1.member,
                                                                                         ipl1.size,
                                                                                         ipl1.commission,
+                                                                                        ipl1.net_return,
                                                                                         ipl1.profit,
                                                                                         ipl1.member.current_commission))
 

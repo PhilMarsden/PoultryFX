@@ -92,12 +92,12 @@
             <td>£{{member.balance | floatformat:2|intcomma}}</td>
         </tr>
         <tr>
-            <td><b>Return</b></td>
-            <td>{{member.return_percentage | floatformat:2|intcomma}}%</td>
+            <td><b>Actual Return</b></td>
+            <td>{{member.actual_return_percentage | floatformat:2|intcomma}}%</td>
         </tr>
         <tr>
-            <td><b>Perfect Return</b></td>
-            <td>{{member.perfect_return_percentage | floatformat:2|intcomma}}%</td>
+            <td><b>Trades Return</b></td>
+            <td>{{member.trades_return_percentage | floatformat:2|intcomma}}%</td>
         </tr>
         <tr>
             <td><b>Total fun fund</b></td>
@@ -132,6 +132,7 @@
           <th>Commission</th>
           <th>Fun Fund</th>
           <th>Net Profit</th>
+          <th>Return</th>
         </tr>
        </thead>
        <tbody>
@@ -147,6 +148,7 @@
             <td>£{{ trade.commission |floatformat:2|intcomma}}</td>
             <td>£{{ trade.fun_fund |floatformat:2|intcomma}}</td>
             <td>£{{ trade.net_profit |floatformat:2|intcomma}}</td>
+            <td>{{ trade.return_percentage_display |floatformat:4|intcomma}}%</td>
         </tr>
         {% endfor %}
        </tbody>
