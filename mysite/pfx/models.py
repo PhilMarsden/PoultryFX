@@ -20,7 +20,7 @@ class PositionViews(models.Model):
 
 
 class TradeEmail(models.Model):
-    message_id = models.CharField(max_length=255, unique=True)
+    message_id = models.CharField(max_length=255)
     trade_date = models.CharField(max_length=32)
     time_live = models.CharField(max_length=32)
     market = models.CharField(max_length=255)
@@ -29,7 +29,7 @@ class TradeEmail(models.Model):
     target_price = models.FloatField()
 
     def __str__(self):
-        return '%s' % (self.message_id)
+        return '%s %s' % (self.market,self.trade_date)
     class Meta:
         verbose_name = "Trade Email"
         verbose_name_plural = "Trade Emails"
