@@ -54,10 +54,10 @@ class pfx_imap(Thread):
                         imap_message_id = msg_str.get('Message-ID').strip()
                         try:
                             logger.info('IMAP Message ID : %s' % imap_message_id)
-                            existing_trade_email = TradeEmail.objects.get(message_id=imap_message_id)
+                            existing_trade_email = TradeEmail.objects.filter(message_id=imap_message_id)
                             logger.debug(
-                                'Trade email already exists for IMAP Message ID : %s' % existing_trade_email.message_id)
-                        except:
+                                'Trade email already exists for IMAP Message ID : %s' % existing_trade_email[0].message_id)
+                        except Exception as inst:
                             logger.info('Add trades for IMAP Message ID : %s' % imap_message_id)
                             typ, data = M.fetch(num, '(RFC822)')
                             raw_email = data[0][1].decode('utf-8')
@@ -104,8 +104,8 @@ class pfx_imap(Thread):
                 logger.debug("ERROR: IMAP Error 2", rv2)
 
             M.logout()
-        except:
-            logger.error("IMAP Error 3")
+        except Exception as inst:
+            logger.error('IMAP Exception : ' % inst)
 
         logger.info('Scanning Emails - Stop')
 
