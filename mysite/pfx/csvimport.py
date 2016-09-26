@@ -473,9 +473,6 @@ assert (Member.objects.get(user=User.objects.get(email='aronrollin@hotmail.com')
 assert (Member.objects.get(user=User.objects.get(email='aronrollin@hotmail.com')).balance == 3721.4695461075066)
 Member.set_all_trade_sizes(10,30)
 
-trades_for_all('2016-09-21.csv')
-assert (total_gross_profit() == 10133.73)
-Member.set_all_trade_sizes(10,30)
 
 
 f = open('tmp.txt', 'a') ; f.write("#trades2016-09-15.csv\n") ; f.close()
@@ -487,5 +484,10 @@ assert (Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.c
 assert (Member.objects.get(user=User.objects.get(email='seancurran78@googlemail.com')).balance == 4288.980155699722)
 assert (Member.objects.get(user=User.objects.get(email='crowecameron@hotmail.com')).balance == 4288.980155699722)
 assert (Member.objects.get(user=User.objects.get(email='aronrollin@hotmail.com')).balance == 3478.269546107507)
+assert (total_gross_profit() == 7170.82)
+#assert (total_gross_profit() == 10133.73)
+Member.set_all_trade_sizes(10,30)
+
+trades_for_all('2016-09-21.csv')
 assert (total_gross_profit() == 3129.57)
 Member.set_all_trade_sizes(10,30)
