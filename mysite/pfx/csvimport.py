@@ -487,5 +487,5 @@ assert (Member.objects.get(user=User.objects.get(email='nigel.ratcliffe@ensoft.c
 assert (Member.objects.get(user=User.objects.get(email='seancurran78@googlemail.com')).balance == 4288.980155699722)
 assert (Member.objects.get(user=User.objects.get(email='crowecameron@hotmail.com')).balance == 4288.980155699722)
 assert (Member.objects.get(user=User.objects.get(email='aronrollin@hotmail.com')).balance == 3478.269546107507)
-assert (total_gross_profit() == 7170.82)
+assert (total_gross_profit() == 3129.57)
 Member.set_all_trade_sizes(10,30)
