@@ -46,7 +46,7 @@ class pfx_imap(Thread):
             if rv2 == 'OK':
                 rv3, data = M.select(EMAIL_FOLDER)
                 if rv3 == 'OK':
-                    typ, data = M.search(None, 'OR SUBJECT "New Live Trades" SUBJECT "New Trade"')
+                    typ, data = M.search(None, 'OR SUBJECT "New Live Trade" SUBJECT "New Trade"')
                     for num in data[0].split():
                         logger.debug('Found an email')
                         typ, data2 = M.fetch(num, '(BODY[HEADER.FIELDS (MESSAGE-ID)])')
