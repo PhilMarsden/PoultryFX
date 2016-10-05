@@ -62,6 +62,7 @@ class pfx_imap(Thread):
                             typ, data = M.fetch(num, '(RFC822)')
                             raw_email = data[0][1].decode('utf-8')
                             msg = email.message_from_string(raw_email).get_payload(decode=False)
+                            store_trade = 0
                             for line in msg.split("\n"):
                                 if "Trade Date - " in line:
                                     trade_date = re.sub('Trade Date - ', '', (line.strip()))
@@ -78,10 +79,21 @@ class pfx_imap(Thread):
                                 if "Trade Stop Price - " in line:
                                     trade_stop = re.sub('Trade Stop Price - ', '', (line.strip()))
                                     logger.debug('Trade Stop : %s' % trade_stop)
+                                if "Trade Target Price - " in line:
+                                    trade_target = re.sub('Trade Target Price - ', '', (line.strip()))
+                                    logger.debug('Trade Target : %s' % trade_target)
+                                    store_trade = 1
                                 if "Trade Target Price- " in line:
                                     trade_target = re.sub('Trade Target Price- ', '', (line.strip()))
                                     logger.debug('Trade Target : %s' % trade_target)
-                                    emailToSendBody = '{} Start:{} Stop:{} Target:{} {}'.format(currency_pair, trade_start, trade_stop,trade_target, time_live)
+                                    store_trade = 1
+                                if store_trade == 1:
+                                    store_trade = 0
+                                    if (trade_target > trade_start):
+                                        trade_direction = "BUY"
+                                    else:
+                                        trade_direction = "SELL"
+                                    emailToSendBody = '{} Direction:{} Start:{} Stop:{} Target:{} {}'.format(currency_pair, trade_direction, trade_start, trade_stop,trade_target, time_live)
                                     emailToSend = EmailMessage('Trade ', emailToSendBody, to=[EMAIL_RECIPIENT])
                                     logger.info('Sending email about trade with IMAP Message ID : %s' % imap_message_id)
                                     emailToSend.send()
