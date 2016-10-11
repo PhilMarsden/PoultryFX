@@ -495,3 +495,7 @@ Member.set_all_trade_sizes(10,30)
 trades_for_all('2016-09-27.csv')
 assert (total_gross_profit() == 10526.54)
 Member.set_all_trade_sizes(10,30)
+
+trades_for_all('2016-10-11.csv')
+assert (total_gross_profit() == 18795.79)
+Member.set_all_trade_sizes(10,30)
