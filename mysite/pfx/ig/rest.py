@@ -101,7 +101,7 @@ class ig_rest:
                 "X-IG-API-KEY": ig_apikey,
                 "X-SECURITY-TOKEN": ig_securitytoken,
                 "CST": ig_cst,
-                "Version": 2
+                "Version": "2"
             }
             resp = requests.get(ig_url + 'positions', headers=req_headers)
             if (resp.status_code == 401):
@@ -151,7 +151,7 @@ class ig_rest:
                 "X-IG-API-KEY": ig_apikey,
                 "X-SECURITY-TOKEN": ig_securitytoken,
                 "CST": ig_cst,
-                "Version": 3
+                "Version": "3"
             }
 
             now = datetime.now()
