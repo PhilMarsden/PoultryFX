@@ -46,18 +46,18 @@ class pfx_imap(Thread):
             if rv2 == 'OK':
                 rv3, data = M.select(EMAIL_FOLDER)
                 if rv3 == 'OK':
-                    typ, data = M.search(None, 'OR SUBJECT "New Live Trade" SUBJECT "New Trade"')
+                    typ, data = M.search(None, 'OR SUBJECT "New Live Trade" SUBJECT "New Trade" SUBJECT "Currency Club - New Live Trade Notification - for Member: MAR003"')
                     for num in data[0].split():
                         logger.debug('Found an email')
                         typ, data2 = M.fetch(num, '(BODY[HEADER.FIELDS (MESSAGE-ID)])')
                         msg_str = email.message_from_string(data2[0][1].decode('utf-8'))
                         imap_message_id = msg_str.get('Message-ID').strip()
-                        try:
-                            logger.info('IMAP Message ID : %s' % imap_message_id)
-                            existing_trade_email = TradeEmail.objects.filter(message_id=imap_message_id)
+                        logger.info('IMAP Message ID : %s' % imap_message_id)
+                        existing_trade_email = TradeEmail.objects.filter(message_id=imap_message_id)
+                        if existing_trade_email.count() > 0:
                             logger.debug(
                                 'Trade email already exists for IMAP Message ID : %s' % existing_trade_email[0].message_id)
-                        except Exception as inst:
+                        else:
                             logger.info('Add trades for IMAP Message ID : %s' % imap_message_id)
                             typ, data = M.fetch(num, '(RFC822)')
                             raw_email = data[0][1].decode('utf-8')
