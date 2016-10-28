@@ -356,7 +356,7 @@ class ig_activity:
     @property
     def matched_open_position(self):
         if self.ig_act_result.startswith('Position/s closed:'):
-            matched_pos = self.ig_act_result[-8]
+            matched_pos = self.ig_act_result[-8:]
             logger.debug('Closing trade found at #{}#, matched position = #{}#'.format(self.ig_act_result,matched_pos))
             # Its a closing trade so see if we have a trade for it
             return matched_pos
