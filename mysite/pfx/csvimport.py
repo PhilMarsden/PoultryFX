@@ -510,5 +510,6 @@ assert (total_gross_profit() == 8349.63)
 Member.set_all_trade_sizes(10,30)
 
 trades_for_all('2016-10-28.csv')
+trades_for_phil('2016-10-31-Phil.csv')
 Member.set_all_trade_sizes(10,30)
-assert (total_gross_profit() == 1326.04)
+assert (total_gross_profit() == 6800.84)
