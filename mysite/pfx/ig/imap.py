@@ -46,7 +46,8 @@ class pfx_imap(Thread):
             if rv2 == 'OK':
                 rv3, data = M.select(EMAIL_FOLDER)
                 if rv3 == 'OK':
-                    typ, data = M.search(None, 'OR SUBJECT "New Live Trade" SUBJECT "New Trade" SUBJECT "Currency Club - New Live Trade Notification - for Member: MAR003"')
+                    #typ, data = M.search(None, 'OR SUBJECT "New Live Trade" SUBJECT "New Trade" SUBJECT "Currency Club - New Live Trade Notification - for Member: MAR003" SUBJECT "Currency Club - New Live Trade Notification"')
+                    typ, data = M.search(None, 'ALL')
                     for num in data[0].split():
                         logger.debug('Found an email')
                         typ, data2 = M.fetch(num, '(BODY[HEADER.FIELDS (MESSAGE-ID)])')
@@ -63,50 +64,71 @@ class pfx_imap(Thread):
                             raw_email = data[0][1].decode('utf-8')
                             msg = email.message_from_string(raw_email).get_payload(decode=False)
                             store_trade = 0
-                            for line in msg.split("\n"):
-                                if "Trade Date - " in line:
-                                    trade_date = re.sub('Trade Date - ', '', (line.strip()))
-                                    logger.debug('Trade Date : %s' % trade_date)
-                                if "Time Live - " in line:
-                                    time_live = re.sub('Time Live - ', '', (line.strip()))
-                                    logger.debug('Time Live : %s' % time_live)
-                                if "Currency Pair - " in line:
-                                    currency_pair = re.sub('Currency Pair - ', '', (line.strip()))
-                                    logger.debug('Currency Pair : %s' % currency_pair)
-                                if "Trade Start Price - " in line:
-                                    trade_start = re.sub('Trade Start Price - ', '', (line.strip()))
-                                    logger.debug('Trade Start : %s' % trade_start)
-                                if "Trade Stop Price - " in line:
-                                    trade_stop = re.sub('Trade Stop Price - ', '', (line.strip()))
-                                    logger.debug('Trade Stop : %s' % trade_stop)
-                                if "Trade Target Price - " in line:
-                                    trade_target = re.sub('Trade Target Price - ', '', (line.strip()))
-                                    logger.debug('Trade Target : %s' % trade_target)
-                                    store_trade = 1
-                                if "Trade Target Price- " in line:
-                                    trade_target = re.sub('Trade Target Price- ', '', (line.strip()))
-                                    logger.debug('Trade Target : %s' % trade_target)
-                                    store_trade = 1
-                                if store_trade == 1:
-                                    store_trade = 0
-                                    if (trade_target > trade_start):
-                                        trade_direction = "BUY"
-                                    else:
-                                        trade_direction = "SELL"
-                                    emailToSendBody = '{} Direction:{} Start:{} Stop:{} Target:{} {}'.format(currency_pair, trade_direction, trade_start, trade_stop,trade_target, time_live)
-                                    emailToSend = EmailMessage('Trade ', emailToSendBody, to=[EMAIL_RECIPIENT])
-                                    logger.info('Sending email about trade with IMAP Message ID : %s' % imap_message_id)
-                                    emailToSend.send()
-                                    trade_email = TradeEmail()
-                                    trade_email.message_id = imap_message_id
-                                    trade_email.market = currency_pair
-                                    trade_email.trade_date = trade_date
-                                    trade_email.time_live = time_live
-                                    trade_email.start_price = float(trade_start)
-                                    trade_email.stop_price = float(trade_stop)
-                                    trade_email.target_price = float(trade_target)
-                                    logger.info('Saving trade to database with IMAP Message ID : %s' % imap_message_id)
-                                    trade_email.save()
+                            section_type = 0
+                            # Multi-part messages are a list which we dont handle so check this is a string
+                            if isinstance(msg,str):
+                                for line in msg.split("\n"):
+                                    if "<< LIVE TRADE >>" in line:
+                                        section_type = 1
+                                        logger.debug('Found a live trade')
+                                    if "Trade Date - " in line:
+                                        trade_date = re.sub('Trade Date - ', '', (line.strip()))
+                                        logger.debug('Trade Date : %s' % trade_date)
+                                    if "Time Live - " in line:
+                                        time_live = re.sub('Time Live - ', '', (line.strip()))
+                                        logger.debug('Time Live : %s' % time_live)
+                                    if "Currency Pair - " in line:
+                                        currency_pair = re.sub('Currency Pair - ', '', (line.strip()))
+                                        logger.debug('Currency Pair : %s' % currency_pair)
+                                    if "Trade Start Price - " in line:
+                                        trade_start = re.sub('Trade Start Price - ', '', (line.strip()))
+                                        logger.debug('Trade Start : %s' % trade_start)
+                                    if "Trade Stop Price - " in line:
+                                        trade_stop = re.sub('Trade Stop Price - ', '', (line.strip()))
+                                        logger.debug('Trade Stop : %s' % trade_stop)
+                                    if "Trade Target Price - " in line:
+                                        trade_target = re.sub('Trade Target Price - ', '', (line.strip()))
+                                        logger.debug('Trade Target : %s' % trade_target)
+                                        store_trade = 1
+                                    if "Trade Target Price- " in line:
+                                        trade_target = re.sub('Trade Target Price- ', '', (line.strip()))
+                                        logger.debug('Trade Target : %s' % trade_target)
+                                        if (section_type == 1):
+                                            logger.debug('Store trade')
+                                            store_trade = 1
+                                        else:
+                                            logger.debug('Ignore trade')
+
+                                    if store_trade == 1:
+                                        store_trade = 0
+                                        if (trade_target > trade_start):
+                                            trade_direction = "BUY"
+                                        else:
+                                            trade_direction = "SELL"
+                                        emailToSendBody = '{} Direction:{} Start:{} Stop:{} Target:{} {}'.format(currency_pair, trade_direction, trade_start, trade_stop,trade_target, time_live)
+                                        emailToSend = EmailMessage('Trade ', emailToSendBody, to=[EMAIL_RECIPIENT])
+                                        logger.info('Sending email about trade with IMAP Message ID : %s' % imap_message_id)
+                                        emailToSend.send()
+                                        trade_email = TradeEmail()
+                                        trade_email.message_id = imap_message_id
+                                        trade_email.market = currency_pair
+                                        trade_email.trade_date = trade_date
+                                        trade_email.time_live = time_live
+                                        trade_email.start_price = float(trade_start)
+                                        trade_email.stop_price = float(trade_stop)
+                                        trade_email.target_price = float(trade_target)
+                                        logger.info('Saving trade to database with IMAP Message ID : %s' % imap_message_id)
+                                        trade_email.save()
+
+                                        trade_date = ''
+                                        time_live = ''
+                                        currency_pair = ''
+                                        trade_start = ''
+                                        trade_stop = ''
+                                        trade_target = ''
+                                        section_type = 0
+                            else:
+                                logger.info('Multi part message - ignore')
 
                     M.close()
                 else:
