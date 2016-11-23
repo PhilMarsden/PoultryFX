@@ -40,12 +40,17 @@ class pfx_imap(Thread):
     def scan_emails(self):
         logger.info('Scanning Emails - Start Server:%s, Account:%s',IMAP_SERVER,EMAIL_ACCOUNT)
         try:
+            logger.info('IMAP : Connect to Server')
             M = imaplib.IMAP4_SSL(IMAP_SERVER)
+            logger.info('IMAP : Login')
             rv, data = M.login(EMAIL_ACCOUNT, EMAIL_PASSWORD)
+            logger.info('IMAP : List')
             rv2, mailboxes = M.list()
             if rv2 == 'OK':
+                logger.info('IMAP : Select EMAIL_FOLDER')
                 rv3, data = M.select(EMAIL_FOLDER)
                 if rv3 == 'OK':
+                    logger.info('IMAP : Search Emails')
                     #typ, data = M.search(None, 'OR SUBJECT "New Live Trade" SUBJECT "New Trade" SUBJECT "Currency Club - New Live Trade Notification - for Member: MAR003" SUBJECT "Currency Club - New Live Trade Notification"')
                     typ, data = M.search(None, 'ALL')
                     for num in data[0].split():
