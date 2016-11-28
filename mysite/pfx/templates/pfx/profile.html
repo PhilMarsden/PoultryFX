@@ -143,12 +143,12 @@
             <td>{{ trade.igpl.direction }}</td>
             <td>{{ trade.igpl.opening_price }}</td>
             <td>{{ trade.igpl.closing_price }}</td>
-            <td>{{ trade.size }}</td>
+            <td>{{ trade.size | floatformat:2 }}</td>
             <td>£{{ trade.profit |floatformat:2|intcomma}}</td>
             <td>£{{ trade.commission |floatformat:2|intcomma}}</td>
             <td>£{{ trade.fun_fund |floatformat:2|intcomma}}</td>
             <td>£{{ trade.net_profit |floatformat:2|intcomma}}</td>
-            <td>{{ trade.return_percentage_display |floatformat:4|intcomma}}%</td>
+            <td>{{ trade.return_percentage_display |floatformat:4}}%</td>
         </tr>
         {% endfor %}
        </tbody>
