@@ -55,10 +55,11 @@ class pfx_imap(Thread):
                     typ, data = M.search(None, 'ALL')
                     for num in data[0].split():
                         logger.debug('Found an email')
-                        typ, data2 = M.fetch(num, '(BODY[HEADER.FIELDS (MESSAGE-ID)])')
+                        typ, data2 = M.fetch(num, '(BODY[HEADER.FIELDS (MESSAGE-ID SUBJECT)])')
                         msg_str = email.message_from_string(data2[0][1].decode('utf-8'))
                         imap_message_id = msg_str.get('Message-ID').strip()
-                        logger.info('IMAP Message ID : %s' % imap_message_id)
+                        msg_subject = msg_str.get('SUBJECT').strip()
+                        logger.info('IMAP Message ID : %s Subject : %s' % (imap_message_id,msg_subject))
                         existing_trade_email = TradeEmail.objects.filter(message_id=imap_message_id)
                         if existing_trade_email.count() > 0:
                             logger.debug(
