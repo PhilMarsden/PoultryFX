@@ -57,6 +57,29 @@ def trades_for_all(file_suffix):
         for m1 in member_list:
             igpl.AddIndividualPL(m1, member_list)
 
+def trades_for_phil2(file_suffix):
+    u1 = User.objects.get(email='phil.marsden@softwire.com')
+    m1 = Member.objects.get(user=u1)
+    m1.current_commission = 0
+    m1.current_fun_fund = 0
+    m1.save
+    igpls = import_csv2(csv_filepathname + file_suffix)
+    member_list = [m1]
+    for igpl in igpls:
+        for m1 in member_list:
+            igpl.AddIndividualPL(m1, member_list)
+    m1.current_commission = 0.05
+    m1.current_fun_fund = 0.01
+    m1.save
+
+
+def trades_for_all2(file_suffix):
+    igpls = import_csv2(csv_filepathname + file_suffix)
+    member_list = Member.objects.all()
+    for igpl in igpls:
+        for m1 in member_list:
+            igpl.AddIndividualPL(m1, member_list)
+
 def asserts_for_all():
     member_list = Member.objects.all()
     f = open('tmp.txt', 'a')
@@ -178,6 +201,48 @@ def import_csv(csv_filename):
         except:
             start_import = False
     return igpls
+
+def import_csv2(csv_filename):
+    reader = mycsv_reader(csv.reader(open(csv_filename,  mode='rU')))
+    start_import = False
+    igpls = []
+    for row in reader:
+        if start_import:
+            logger.info(row)
+            igpl = models.IGPL()
+            igpl.closing_ref = row[5]
+            igpl.closed_date = datetime.datetime.strptime(row[2], "%Y-%m-%d %H:%M:%S.0").strftime("%Y-%m-%d")
+            igpl.opening_ref = row[4]
+            igpl.opening_date = datetime.datetime.strptime(row[23], "%Y-%m-%d %H:%M:%S.0").strftime("%Y-%m-%d")
+            igpl.market = row[21]
+            igpl.period = row[26]
+            igpl.direction = row[0]
+            igpl.size = float(row[9])
+            igpl.opening_price = float(row[6])
+            igpl.closing_price = float(row[8])
+            igpl.trade_ccy = row[14]
+            igpl.gross_profit = float(row[27].replace(',',''))
+            igpl.funding = float(row[17])
+            igpl.borrowing = float(row[3])
+            igpl.dividends = float(row[15])
+            igpl.lrprem = float(0)
+            igpl.others = float(0)
+            igpl.commccy = float(0)
+            igpl.comm = float(row[10])
+            igpl.net_profit = float(row[28].replace(',',''))
+            igpl.save()
+            igpls.append(igpl)
+            logger.info("Imported " + row[0])
+
+        try:
+            if row[0] == 'Direction':
+                start_import = True
+        except:
+            start_import = False
+    return igpls
+### QQ
+###trades_for_all2('2016-12-09.csv')
+### QQ
 
 bootstrap_data()
 f = open('tmp.txt', 'w')
@@ -530,3 +595,6 @@ trades_for_all('2016-11-28.csv')
 Member.set_all_trade_sizes(10,30)
 assert (total_gross_profit() == 1201.07)
 
+trades_for_all2('2016-12-09.csv')
+
+assert (total_gross_profit() == 5407.63)
