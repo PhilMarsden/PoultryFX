@@ -65,7 +65,7 @@ class pfx_imap(Thread):
                             logger.debug(
                                 'Trade email already exists for IMAP Message ID : %s' % existing_trade_email[0].message_id)
                         else:
-                            logger.info('Add trades for IMAP Message ID : %s' % imap_message_id)
+                            logger.info('Check trades for IMAP Message ID : %s' % imap_message_id)
                             typ, data = M.fetch(num, '(RFC822)')
                             raw_email = data[0][1].decode('utf-8')
                             msg = email.message_from_string(raw_email).get_payload(decode=False)
@@ -74,6 +74,8 @@ class pfx_imap(Thread):
                             # Multi-part messages are a list which we dont handle so check this is a string
                             if isinstance(msg,str):
                                 for line in msg.split("\n"):
+                                    if "<< WINNING TRADE >>" in line:
+                                        logger.debug('Found a winning trade')
                                     if "<< LIVE TRADE >>" in line:
                                         section_type = 1
                                         logger.debug('Found a live trade')
