@@ -62,7 +62,7 @@ class pfx_imap(Thread):
                         logger.info('IMAP Message ID : %s Subject : %s' % (imap_message_id,msg_subject))
                         existing_trade_email = TradeEmail.objects.filter(message_id=imap_message_id)
                         if existing_trade_email.count() > 0:
-                            logger.debug(
+                            logger.info(
                                 'Trade email already exists for IMAP Message ID : %s' % existing_trade_email[0].message_id)
                         else:
                             logger.info('Check trades for IMAP Message ID : %s' % imap_message_id)
@@ -75,10 +75,10 @@ class pfx_imap(Thread):
                             if isinstance(msg,str):
                                 for line in msg.split("\n"):
                                     if "<< WINNING TRADE >>" in line:
-                                        logger.debug('Found a winning trade')
+                                        logger.info('Found a winning trade')
                                     if "<< LIVE TRADE >>" in line:
                                         section_type = 1
-                                        logger.debug('Found a live trade')
+                                        logger.info('Found a live trade')
                                     if "Trade Date - " in line:
                                         trade_date = re.sub('Trade Date - ', '', (line.strip()))
                                         logger.debug('Trade Date : %s' % trade_date)
@@ -102,10 +102,10 @@ class pfx_imap(Thread):
                                         trade_target = re.sub('Trade Target Price- ', '', (line.strip()))
                                         logger.debug('Trade Target : %s' % trade_target)
                                         if (section_type == 1):
-                                            logger.debug('Store trade')
+                                            logger.info('Store trade')
                                             store_trade = 1
                                         else:
-                                            logger.debug('Ignore trade')
+                                            logger.info('Ignore trade')
 
                                     if store_trade == 1:
                                         store_trade = 0
