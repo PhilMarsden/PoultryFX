@@ -600,3 +600,18 @@ assert (total_gross_profit() == 5407.63)
 
 trades_for_phil2('2017-05-05-Phil.csv')
 assert (total_gross_profit() == 6140.05)
+
+trades_for_phil2('2017-08-03-Phil.csv')
+#assert (total_gross_profit() == 6140.05)
+
+u1 = User.objects.get(email='aronrollin@hotmail.com')
+m1 = Member.objects.get(user=u1)
+date1 = datetime.datetime(2017, 8, 2)
+ic1 = IndividualCash(member=m1, size=-3423.04, transaction_date=date1)
+ic1.save()
+
+u1 = User.objects.get(email='seancurran78@googlemail.com')
+m1 = Member.objects.get(user=u1)
+date1 = datetime.datetime(2017, 8, 2)
+ic1 = IndividualCash(member=m1, size=-4041.33, transaction_date=date1)
+ic1.save()
